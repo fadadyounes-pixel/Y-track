@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X-TRACK — Youth Tracking, Reporting & Knowledge System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --color-primary: #2563EB;
+            --color-cyan: #06B6D4;
+            --color-gold: #F59E0B;
+            --color-green: #10B981;
+            --color-red: #EF4444;
+            --color-orange: #F97316;
+            --color-dark: #0F172A;
+            --color-dark-gray: #1E293B;
+            --color-gray: #94A3B8;
+            --color-light: #F8FAFC;
+            --color-white: #FFFFFF;
+            --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-primary);
+            background: var(--color-light);
+            color: var(--color-dark-gray);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+
+        /* Loading / Splash Screen */
+        #splash {
+            position: fixed; inset: 0; background: var(--color-dark);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.6s ease;
+        }
+        #splash.hide { opacity: 0; pointer-events: none; }
+        .splash-logo { width: 160px; height: 160px; margin-bottom: 24px; }
+        .splash-title {
+            font-size: 42px; font-weight: 800; color: var(--color-white);
+            letter-spacing: 4px; margin-bottom: 8px; opacity: 0;
+            animation: fadeUp 0.8s ease 2s forwards;
+        }
+        .splash-tagline {
+            font-size: 14px; font-weight: 400; color: var(--color-gray);
+            letter-spacing: 6px; text-transform: uppercase; opacity: 0;
+            animation: fadeUp 0.8s ease 2.5s forwards;
+        }
+
+        /* Logo Animations */
+        .logo-ring-outer {
+            fill: none; stroke: #3b82f6; stroke-width: 3;
+            stroke-dasharray: 440; stroke-dashoffset: 440;
+            animation: drawRing 1.5s ease-out forwards;
+        }
+        .logo-ring-inner {
+            fill: none; stroke: #06b6d4; stroke-width: 2;
+            stroke-dasharray: 314; stroke-dashoffset: 314;
+            animation: drawRingInner 1.2s ease-out 0.5s forwards;
+        }
+        .logo-y {
+            fill: none; stroke: #ffffff; stroke-width: 4;
+            stroke-linecap: round; stroke-linejoin: round;
+            stroke-dasharray: 200; stroke-dashoffset: 200;
+            animation: drawY 1s ease-out 1s forwards;
+        }
+        .logo-dot {
+            fill: #f59e0b; opacity: 0;
+            animation: pulseDot 0.6s ease-out 1.8s forwards, pulse 2s ease-in-out 2.4s infinite;
+        }
+        .logo-dots { opacity: 0; animation: fadeIn 0.5s ease 2s forwards; }
+
+        @keyframes drawRing { to { stroke-dashoffset: 0; } }
+        @keyframes drawRingInner { to { stroke-dashoffset: 0; } }
+        @keyframes drawY { to { stroke-dashoffset: 0; } }
+        @keyframes pulseDot { to { opacity: 1; } }
+        @keyframes pulse { 0%, 100% { r: 5; opacity: 1; } 50% { r: 8; opacity: 0.6; } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Login Screen */
+        #login-screen {
+            min-height: 100vh; display: flex; align-items: center; justify-content: center;
+            background: linear-gradient(135deg, var(--color-dark) 0%, #1e293b 100%);
+            padding: 20px;
+        }
+        .login-card {
+            background: var(--color-white); border-radius: var(--radius);
+            box-shadow: var(--shadow-lg); width: 100%; max-width: 420px; padding: 40px;
+            text-align: center;
+        }
+        .login-logo { width: 80px; height: 80px; margin: 0 auto 20px; }
+        .login-logo .logo-ring-outer { stroke: #2563eb; stroke-width: 10; }
+        .login-logo .logo-ring-inner { stroke: #06b6d4; stroke-width: 6; }
+        .login-logo .logo-y { stroke: #1e293b; stroke-width: 14; }
+        .login-logo .logo-dot { fill: #f59e0b; opacity: 1; animation: pulse 2s ease-in-out infinite; }
+        .login-card h1 { font-size: 28px; font-weight: 800; color: var(--color-dark); margin-bottom: 4px; }
+        .login-card .tagline { font-size: 12px; font-weight: 500; color: var(--color-gray); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px; }
+        .form-group { text-align: left; margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; color: var(--color-dark-gray); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-control {
+            width: 100%; padding: 12px 14px; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm);
+            font-family: inherit; font-size: 15px; transition: all 0.2s;
+        }
+        .form-control:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 12px 24px; border: none; border-radius: var(--radius-sm);
+            font-family: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+            transition: all 0.2s; text-decoration: none;
+        }
+        .btn-primary { background: var(--color-primary); color: white; }
+        .btn-primary:hover { background: #1d4ed8; transform: translateY(-1px); box-shadow: var(--shadow); }
+        .btn-success { background: var(--color-green); color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-danger { background: var(--color-red); color: white; }
+        .btn-warning { background: var(--color-orange); color: white; }
+        .btn-secondary { background: #e2e8f0; color: var(--color-dark-gray); }
+        .btn-sm { padding: 8px 14px; font-size: 13px; }
+        .btn-block { width: 100%; }
+
+        /* App Layout */
+        #app { display: none; min-height: 100vh; }
+        .layout { display: flex; min-height: 100vh; }
+
+        /* Sidebar */
+        .sidebar {
+            width: 260px; background: var(--color-dark); color: var(--color-white);
+            display: flex; flex-direction: column; position: fixed; height: 100vh;
+            transition: transform 0.3s ease; z-index: 100;
+        }
+        .sidebar-header {
+            padding: 24px 20px; border-bottom: 1px solid rgba(255,255,255,0.08);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .sidebar-logo { width: 36px; height: 36px; flex-shrink: 0; }
+        .sidebar-logo svg { width: 100%; height: 100%; }
+        .sidebar-brand { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+        .sidebar-nav { flex: 1; overflow-y: auto; padding: 16px 12px; }
+        .nav-item {
+            display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+            border-radius: var(--radius-sm); cursor: pointer; margin-bottom: 4px;
+            color: var(--color-gray); font-size: 14px; font-weight: 500;
+            transition: all 0.2s; border: none; background: transparent; width: 100%; text-align: left;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.06); color: var(--color-white); }
+        .nav-item.active { box-shadow: inset 3px 0 0 var(--color-primary); }
+        .nav-item i { width: 20px; text-align: center; }
+        .sidebar-footer { padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 12px; color: var(--color-gray); }
+        .user-pill { display: flex; align-items: center; gap: 10px; }
+        .user-avatar {
+            width: 32px; height: 32px; border-radius: 50%; background: var(--color-primary);
+            display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px;
+        }
+
+        /* Main Content */
+        .main { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; }
+        .topbar {
+            height: 64px; background: var(--color-white); border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
+            position: sticky; top: 0; z-index: 50;
+        }
+        .topbar-left { display: flex; align-items: center; gap: 16px; }
+        .menu-toggle { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--color-dark-gray); }
+        .page-title { font-size: 20px; font-weight: 700; color: var(--color-dark); }
+        .topbar-right { display: flex; align-items: center; gap: 16px; }
+        .icon-btn {
+            width: 36px; height: 36px; border-radius: 50%; border: none; background: var(--color-light);
+            color: var(--color-dark-gray); cursor: pointer; display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { background: #e2e8f0; }
+
+        .content { flex: 1; padding: 28px; }
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+
+        /* Cards & KPI */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-bottom: 28px; }
+        .kpi-card {
+            background: var(--color-white); border-radius: var(--radius); padding: 24px;
+            box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .kpi-label { font-size: 13px; font-weight: 600; color: var(--color-gray); text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-value { font-size: 32px; font-weight: 800; color: var(--color-dark); line-height: 1; }
+        .kpi-meta { font-size: 13px; color: var(--color-green); font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .kpi-meta.down { color: var(--color-red); }
+
+        .card {
+            background: var(--color-white); border-radius: var(--radius);
+            box-shadow: var(--shadow-sm); border: 1px solid #f1f5f9; overflow: hidden;
+        }
+        .card-header {
+            padding: 20px 24px; border-bottom: 1px solid #f1f5f9;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        .card-title { font-size: 16px; font-weight: 700; color: var(--color-dark); }
+        .card-body { padding: 24px; }
+
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px; margin-bottom: 28px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 28px; }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th, td { padding: 14px 16px; text-align: left; font-size: 14px; }
+        th { font-weight: 600; color: var(--color-gray); text-transform: uppercase; font-size: 11px; letter-spacing: 0.8px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; }
+        td { border-bottom: 1px solid #f1f5f9; color: var(--color-dark-gray); }
+        tr:hover td { background: #f8fafc; }
+        .badge {
+            display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px;
+            border-radius: 999px; font-size: 12px; font-weight: 600;
+        }
+        .badge-green { background: #d1fae5; color: #065f46; }
+        .badge-blue { background: #dbeafe; color: #1e40af; }
+        .badge-red { background: #fee2e2; color: #991b1b; }
+        .badge-gray { background: #f1f5f9; color: #475569; }
+        .badge-gold { background: #fef3c7; color: #92400e; }
+
+        /* Status dots */
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .status-online { background: var(--color-green); box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+        .status-syncing { background: var(--color-gold); box-shadow: 0 0 0 3px rgba(245,158,11,0.2); }
+        .status-offline { background: var(--color-red); box-shadow: 0 0 0 3px rgba(239,68,68,0.2); }
+
+        /* Journey Tracker */
+        .journey { display: flex; align-items: center; gap: 8px; }
+        .journey-step {
+            width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 700; border: 2px solid #e2e8f0; background: white; color: var(--color-gray);
+        }
+        .journey-step.done { background: var(--color-green); border-color: var(--color-green); color: white; }
+        .journey-step.active { background: var(--color-primary); border-color: var(--color-primary); color: white; box-shadow: 0 0 0 3px rgba(37,99,235,0.15); }
+        .journey-line { flex: 1; height: 2px; background: #e2e8f0; max-width: 24px; }
+        .journey-line.done { background: var(--color-green); }
+
+        /* Platform Cards */
+        .platform-card { background: white; border-radius: var(--radius); border: 1px solid #f1f5f9; padding: 24px; transition: all 0.2s; }
+        .platform-card:hover { box-shadow: var(--shadow); transform: translateY(-2px); }
+        .platform-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px; }
+        .platform-name { font-size: 16px; font-weight: 700; color: var(--color-dark); margin-bottom: 4px; }
+        .platform-meta { font-size: 13px; color: var(--color-gray); }
+        .platform-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; padding: 16px 0; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        .p-stat { text-align: center; }
+        .p-stat-value { font-size: 20px; font-weight: 800; color: var(--color-dark); }
+        .p-stat-label { font-size: 11px; color: var(--color-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+        .platform-footer { display: flex; align-items: center; justify-content: space-between; }
+        .coordinator { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--color-dark-gray); }
+        .coordinator .user-avatar { width: 24px; height: 24px; font-size: 10px; }
+
+        /* Modals */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(15,23,42,0.5);
+            display: none; align-items: center; justify-content: center; z-index: 200; padding: 20px;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white; border-radius: var(--radius); width: 100%; max-width: 560px;
+            max-height: 90vh; overflow-y: auto; box-shadow: var(--shadow-lg);
+        }
+        .modal-header { padding: 20px 24px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+        .modal-title { font-size: 18px; font-weight: 700; }
+        .modal-close { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--color-gray); }
+        .modal-body { padding: 24px; }
+        .modal-footer { padding: 16px 24px; border-top: 1px solid #f1f5f9; display: flex; justify-content: flex-end; gap: 10px; }
+
+        /* Forms inside modals */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--color-dark-gray); }
+        .form-control { width: 100%; padding: 10px 12px; border: 1.5px solid #e2e8f0; border-radius: var(--radius-sm); font-family: inherit; font-size: 14px; }
+        .form-control:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+        select.form-control { appearance: none; background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 8px center; background-repeat: no-repeat; background-size: 20px; padding-right: 36px; }
+
+        /* Messages */
+        .message-item { padding: 16px; border-bottom: 1px solid #f1f5f9; display: flex; gap: 16px; align-items: start; }
+        .message-item:last-child { border-bottom: none; }
+        .message-icon { width: 40px; height: 40px; border-radius: 50%; background: #dbeafe; color: var(--color-primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .message-content { flex: 1; }
+        .message-subject { font-weight: 600; color: var(--color-dark); margin-bottom: 2px; }
+        .message-preview { font-size: 13px; color: var(--color-gray); margin-bottom: 4px; }
+        .message-meta { font-size: 12px; color: var(--color-gray); display: flex; gap: 12px; }
+
+        /* Reports */
+        .report-card { border: 1.5px solid #e2e8f0; border-radius: var(--radius); padding: 24px; cursor: pointer; transition: all 0.2s; }
+        .report-card:hover { border-color: var(--color-primary); box-shadow: var(--shadow); }
+        .report-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); background: #eff6ff; color: var(--color-primary); display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; }
+        .report-name { font-weight: 700; color: var(--color-dark); margin-bottom: 4px; }
+        .report-desc { font-size: 13px; color: var(--color-gray); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); }
+            .sidebar.open { transform: translateX(0); }
+            .main { margin-left: 0; }
+            .menu-toggle { display: block; }
+            .kpi-grid { grid-template-columns: 1fr; }
+            .grid-2, .grid-3 { grid-template-columns: 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .content { padding: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash">
+    <svg class="splash-logo" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <circle class="logo-ring-outer" cx="100" cy="100" r="70"/>
+        <circle class="logo-ring-inner" cx="100" cy="100" r="50"/>
+        <path class="logo-y" d="M 85 70 L 100 95 L 115 70 M 100 95 L 100 130"/>
+        <circle class="logo-dot" cx="100" cy="55" r="5"/>
+        <g class="logo-dots">
+            <circle cx="100" cy="30" r="3" fill="#10b981"/>
+            <circle cx="130" cy="45" r="3" fill="#10b981"/>
+            <circle cx="145" cy="75" r="3" fill="#10b981"/>
+            <circle cx="140" cy="105" r="3" fill="#10b981"/>
+        </g>
+    </svg>
+    <div class="splash-title">X-TRACK</div>
+    <div class="splash-tagline">Empowering Youth, Tracking Progress</div>
+</div>
+
+<!-- Login Screen -->
+<div id="login-screen">
+    <div class="login-card">
+        <div class="login-logo">
+            <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="100" cy="100" r="80" fill="none" stroke="#2563eb" stroke-width="10"/>
+                <path d="M 75 60 L 100 100 L 125 60 M 100 100 L 100 150" fill="none" stroke="#1e293b" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle class="logo-dot" cx="100" cy="40" r="8" fill="#f59e0b"/>
+            </svg>
+        </div>
+        <h1>X-TRACK</h1>
+        <div class="tagline">Youth Tracking, Reporting & Knowledge System</div>
+        <form id="login-form" onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control" value="admin@xtrack.ma" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" value="password" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+        <p style="margin-top:20px;font-size:13px;color:var(--color-gray);">
+            Demo: Use any email & password to login
+        </p>
+    </div>
+</div>
+
+<!-- Main App -->
+<div id="app">
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="100" cy="100" r="80" fill="none" stroke="#2563eb" stroke-width="10"/>
+                        <path d="M 75 60 L 100 100 L 125 60 M 100 100 L 100 150" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="100" cy="40" r="8" fill="#f59e0b"/>
+                    </svg>
+                </div>
+                <div class="sidebar-brand">X-TRACK</div>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" onclick="showView('dashboard')"><i class="fas fa-th-large"></i> Dashboard</button>
+                <button class="nav-item" onclick="showView('platforms')"><i class="fas fa-building"></i> Youth Platforms</button>
+                <button class="nav-item" onclick="showView('beneficiaries')"><i class="fas fa-users"></i> Beneficiaries</button>
+                <button class="nav-item" onclick="showView('programs')"><i class="fas fa-graduation-cap"></i> Programs</button>
+                <button class="nav-item" onclick="showView('messages')"><i class="fas fa-envelope"></i> Messages</button>
+                <button class="nav-item" onclick="showView('reports')"><i class="fas fa-chart-bar"></i> Reports</button>
+                <button class="nav-item" onclick="showView('settings')"><i class="fas fa-cog"></i> Settings</button>
+            </nav>
+            <div class="sidebar-footer">
+                <div class="user-pill">
+                    <div class="user-avatar">SA</div>
+                    <div>
+                        <div style="font-weight:600;color:white;font-size:13px;">Super Admin</div>
+                        <div style="font-size:11px;">Global Access</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <div class="page-title" id="page-title">Dashboard</div>
+                </div>
+                <div class="topbar-right">
+                    <button class="icon-btn" title="Sync Status"><i class="fas fa-sync" style="color:var(--color-green)"></i></button>
+                    <button class="icon-btn" title="Notifications"><i class="fas fa-bell"></i></button>
+                    <button class="icon-btn" onclick="logout()" title="Logout"><i class="fas fa-sign-out-alt"></i></button>
+                </div>
+            </header>
+
+            <div class="content">
+                <!-- DASHBOARD -->
+                <div id="view-dashboard" class="view active">
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label">Total Beneficiaries</div>
+                            <div class="kpi-value" id="kpi-total">1,247</div>
+                            <div class="kpi-meta"><i class="fas fa-arrow-up"></i> 12% from last month</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Female Participation</div>
+                            <div class="kpi-value" id="kpi-female">58%</div>
+                            <div class="kpi-meta"><i class="fas fa-arrow-up"></i> 3% increase</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Completion Rate</div>
+                            <div class="kpi-value" id="kpi-completion">74%</div>
+                            <div class="kpi-meta"><i class="fas fa-arrow-up"></i> 5% improvement</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Active Platforms</div>
+                            <div class="kpi-value" id="kpi-platforms">4</div>
+                            <div class="kpi-meta"><i class="fas fa-check-circle"></i> All online</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Outcomes Achieved</div>
+                            <div class="kpi-value">892</div>
+                            <div class="kpi-meta"><i class="fas fa-arrow-up"></i> 8% growth</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label">Dropout Rate</div>
+                            <div class="kpi-value" style="color:var(--color-red)">6.2%</div>
+                            <div class="kpi-meta down"><i class="fas fa-arrow-down"></i> 1.2% decrease</div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Registration Trends</div></div>
+                            <div class="card-body"><canvas id="chart-registrations" height="220"></canvas></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Gender Distribution</div></div>
+                            <div class="card-body"><canvas id="chart-gender" height="220"></canvas></div>
+                        </div>
+                    </div>
+
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Program Distribution</div></div>
+                            <div class="card-body"><canvas id="chart-programs" height="220"></canvas></div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Age Groups</div></div>
+                            <div class="card-body"><canvas id="chart-age" height="220"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PLATFORMS -->
+                <div id="view-platforms" class="view">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <div></div>
+                        <button class="btn btn-primary" onclick="openModal('modal-platform')"><i class="fas fa-plus"></i> Add Platform</button>
+                    </div>
+                    <div class="grid-3" id="platforms-grid"></div>
+                </div>
+
+                <!-- BENEFICIARIES -->
+                <div id="view-beneficiaries" class="view">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;gap:12px;flex-wrap:wrap;">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                            <input type="text" class="form-control" placeholder="Search beneficiaries..." style="width:260px;" oninput="searchBeneficiaries(this.value)">
+                            <select class="form-control" style="width:160px;" onchange="filterBeneficiaries('status', this.value)">
+                                <option value="">All Statuses</option>
+                                <option>Registered</option>
+                                <option>Active</option>
+                                <option>Completed</option>
+                                <option>Referred</option>
+                                <option>Dropped</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="openModal('modal-beneficiary')"><i class="fas fa-plus"></i> Add Beneficiary</button>
+                    </div>
+                    <div class="card">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th><th>Name</th><th>Platform</th><th>Program</th><th>Journey</th><th>Status</th><th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="beneficiaries-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PROGRAMS -->
+                <div id="view-programs" class="view">
+                    <div class="grid-3" id="programs-grid"></div>
+                </div>
+
+                <!-- MESSAGES -->
+                <div id="view-messages" class="view">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                        <div style="font-weight:600;color:var(--color-gray);">Recent Communications</div>
+                        <button class="btn btn-primary" onclick="openModal('modal-message')"><i class="fas fa-paper-plane"></i> Compose</button>
+                    </div>
+                    <div class="card" id="messages-list"></div>
+                </div>
+
+                <!-- REPORTS -->
+                <div id="view-reports" class="view">
+                    <div class="grid-2" style="margin-bottom:28px;">
+                        <div class="report-card" onclick="openModal('modal-report')">
+                            <div class="report-icon"><i class="fas fa-file-pdf"></i></div>
+                            <div class="report-name">Monthly Monitoring</div>
+                            <div class="report-desc">KPIs, data quality, and risk analysis</div>
+                        </div>
+                        <div class="report-card" onclick="openModal('modal-report')">
+                            <div class="report-icon"><i class="fas fa-chart-pie"></i></div>
+                            <div class="report-name">Quarterly Performance</div>
+                            <div class="report-desc">Target vs actual with trend analysis</div>
+                        </div>
+                        <div class="report-card" onclick="openModal('modal-report')">
+                            <div class="report-icon"><i class="fas fa-trophy"></i></div>
+                            <div class="report-name">Annual Impact</div>
+                            <div class="report-desc">Outcome analysis and success stories</div>
+                        </div>
+                        <div class="report-card" onclick="openModal('modal-report')">
+                            <div class="report-icon"><i class="fas fa-filter"></i></div>
+                            <div class="report-name">Ad-hoc Report</div>
+                            <div class="report-desc">Custom filters and date ranges</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SETTINGS -->
+                <div id="view-settings" class="view">
+                    <div class="grid-2">
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Profile Settings</div></div>
+                            <div class="card-body">
+                                <div class="form-group"><label>Full Name</label><input class="form-control" value="Super Admin"></div>
+                                <div class="form-group"><label>Email</label><input class="form-control" value="admin@xtrack.ma"></div>
+                                <div class="form-group"><label>Language</label>
+                                    <select class="form-control"><option>English</option><option>French</option><option>Arabic</option></select>
+                                </div>
+                                <button class="btn btn-primary">Save Changes</button>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <div class="card-header"><div class="card-title">Cloud Drive Sync</div></div>
+                            <div class="card-body" id="cloud-drives"></div>
+                        </div>
+                    </div>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-header"><div class="card-title">User Management</div></div>
+                        <div class="card-body table-wrap">
+                            <table>
+                                <thead><tr><th>User</th><th>Role</th><th>Platform</th><th>Status</th></tr></thead>
+                                <tbody id="users-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<!-- Modal: Add Platform -->
+<div class="modal-overlay" id="modal-platform">
+    <div class="modal">
+        <div class="modal-header"><div class="modal-title">Add New Platform</div><button class="modal-close" onclick="closeModal('modal-platform')">&times;</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label>Platform Name</label><input class="form-control" id="p-name" placeholder="e.g. Casablanca Youth Center"></div>
+                <div class="form-group"><label>Coordinator</label><input class="form-control" id="p-coord" placeholder="Coordinator name"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Region</label><input class="form-control" id="p-region" placeholder="e.g. Casablanca-Settat"></div>
+                <div class="form-group"><label>City</label><input class="form-control" id="p-city" placeholder="e.g. Casablanca"></div>
+            </div>
+            <div class="form-group"><label>Address</label><input class="form-control" id="p-address" placeholder="Street address"></div>
+            <div class="form-group"><label>OneDrive URL</label><input class="form-control" id="p-onedrive" placeholder="https://..."></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-platform')">Cancel</button>
+            <button class="btn btn-primary" onclick="addPlatform()">Save Platform</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Add Beneficiary -->
+<div class="modal-overlay" id="modal-beneficiary">
+    <div class="modal">
+        <div class="modal-header"><div class="modal-title">Register Beneficiary</div><button class="modal-close" onclick="closeModal('modal-beneficiary')">&times;</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label>First Name</label><input class="form-control" id="b-fname"></div>
+                <div class="form-group"><label>Last Name</label><input class="form-control" id="b-lname"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Gender</label>
+                    <select class="form-control" id="b-gender"><option>Male</option><option>Female</option></select>
+                </div>
+                <div class="form-group"><label>Date of Birth</label><input type="date" class="form-control" id="b-dob"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>Platform</label>
+                    <select class="form-control" id="b-platform"></select>
+                </div>
+                <div class="form-group"><label>Program</label>
+                    <select class="form-control" id="b-program">
+                        <option>Leadership & Civic Engagement</option>
+                        <option>Skills Training & Vocational Education</option>
+                        <option>Entrepreneurship & Business Development</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group"><label>Email</label><input type="email" class="form-control" id="b-email"></div>
+            <div class="form-group"><label>Phone</label><input class="form-control" id="b-phone" placeholder="+212..."></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-beneficiary')">Cancel</button>
+            <button class="btn btn-primary" onclick="addBeneficiary()">Register</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Compose Message -->
+<div class="modal-overlay" id="modal-message">
+    <div class="modal">
+        <div class="modal-header"><div class="modal-title">Compose Message</div><button class="modal-close" onclick="closeModal('modal-message')">&times;</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label>Recipients</label>
+                <select class="form-control" id="m-recipient">
+                    <option value="all">All Platforms</option>
+                    <option value="platform">Specific Platform</option>
+                    <option value="program">By Program</option>
+                    <option value="status">By Status</option>
+                </select>
+            </div>
+            <div class="form-group"><label>Subject</label><input class="form-control" id="m-subject" placeholder="Message subject"></div>
+            <div class="form-group"><label>Message</label><textarea class="form-control" id="m-body" rows="4" placeholder="Type your message..."></textarea></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-message')">Cancel</button>
+            <button class="btn btn-primary" onclick="sendMessage()">Send Now</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Generate Report -->
+<div class="modal-overlay" id="modal-report">
+    <div class="modal">
+        <div class="modal-header"><div class="modal-title">Generate Report</div><button class="modal-close" onclick="closeModal('modal-report')">&times;</button></div>
+        <div class="modal-body">
+            <div class="form-row">
+                <div class="form-group"><label>From</label><input type="date" class="form-control"></div>
+                <div class="form-group"><label>To</label><input type="date" class="form-control"></div>
+            </div>
+            <div class="form-group"><label>Platforms</label><select class="form-control" multiple style="height:80px;"><option>All</option><option>Casablanca</option><option>Rabat</option><option>Marrakech</option><option>Fes</option></select></div>
+            <div class="form-group"><label>Export Format</label>
+                <div style="display:flex;gap:10px;margin-top:8px;">
+                    <button class="btn btn-sm btn-secondary" style="flex:1;"><i class="fas fa-file-pdf"></i> PDF</button>
+                    <button class="btn btn-sm btn-secondary" style="flex:1;"><i class="fas fa-file-excel"></i> Excel</button>
+                    <button class="btn btn-sm btn-secondary" style="flex:1;"><i class="fas fa-file-csv"></i> CSV</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('modal-report')">Cancel</button>
+            <button class="btn btn-primary" onclick="closeModal('modal-report'); alert('Report generated successfully!')">Generate</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ================= DATA STORE ================= */
+const store = {
+    platforms: [
+        { id: 'PLT-001', name: 'Casablanca Youth Center', region: 'Casablanca-Settat', city: 'Casablanca', address: '123 Avenue Hassan II', coordinator: 'Ahmed Benali', syncStatus: 'online', lastSync: '2026-05-11T10:30:00Z', beneficiaries: 342, active: 180, completed: 145 },
+        { id: 'PLT-002', name: 'Rabat Leadership Hub', region: 'Rabat-Sale-Kenitra', city: 'Rabat', address: '45 Boulevard Mohammed VI', coordinator: 'Sara Alami', syncStatus: 'online', lastSync: '2026-05-11T09:15:00Z', beneficiaries: 298, active: 156, completed: 120 },
+        { id: 'PLT-003', name: 'Marrakech Skills Academy', region: 'Marrakech-Safi', city: 'Marrakech', address: '78 Rue Ibn Sina', coordinator: 'Karim Idrissi', syncStatus: 'syncing', lastSync: '2026-05-10T16:45:00Z', beneficiaries: 415, active: 220, completed: 175 },
+        { id: 'PLT-004', name: 'Fes Entrepreneurship Center', region: 'Fes-Meknes', city: 'Fes', address: '12 Avenue Allal El Fassi', coordinator: 'Laila Bennani', syncStatus: 'online', lastSync: '2026-05-11T08:00:00Z', beneficiaries: 192, active: 98, completed: 82 }
+    ],
+    beneficiaries: [
+        { id: 'YTR-2847', firstName: 'Amina', lastName: 'El Fassi', gender: 'Female', age: 22, ageGroup: '18-24', region: 'Casablanca-Settat', city: 'Casablanca', education: 'Bachelor', registrationDate: '2026-02-10', platformId: 'PLT-001', program: 'Skills Training & Vocational Education', status: 'Active', email: 'amina@example.com', phone: '+212612345678', journeyStep: 3 },
+        { id: 'YTR-2848', firstName: 'Youssef', lastName: 'Benkirane', gender: 'Male', age: 19, ageGroup: '18-24', region: 'Rabat-Sale-Kenitra', city: 'Rabat', education: 'High School', registrationDate: '2026-01-15', platformId: 'PLT-002', program: 'Leadership & Civic Engagement', status: 'Completed', email: 'youssef@example.com', phone: '+212623456789', journeyStep: 4 },
+        { id: 'YTR-2849', firstName: 'Fatima', lastName: 'Zahraoui', gender: 'Female', age: 25, ageGroup: '25-30', region: 'Marrakech-Safi', city: 'Marrakech', education: 'Master', registrationDate: '2026-03-22', platformId: 'PLT-003', program: 'Entrepreneurship & Business Development', status: 'Active', email: 'fatima@example.com', phone: '+212634567890', journeyStep: 2 },
+        { id: 'YTR-2850', firstName: 'Omar', lastName: 'Tahiri', gender: 'Male', age: 21, ageGroup: '18-24', region: 'Casablanca-Settat', city: 'Casablanca', education: 'Bachelor', registrationDate: '2026-02-05', platformId: 'PLT-001', program: 'Skills Training & Vocational Education', status: 'Dropped', email: 'omar@example.com', phone: '+212645678901', journeyStep: 3 },
+        { id: 'YTR-2851', firstName: 'Hanae', lastName: 'El Amrani', gender: 'Female', age: 20, ageGroup: '18-24', region: 'Fes-Meknes', city: 'Fes', education: 'High School', registrationDate: '2026-04-01', platformId: 'PLT-004', program: 'Leadership & Civic Engagement', status: 'Registered', email: 'hanae@example.com', phone: '+212656789012', journeyStep: 1 },
+        { id: 'YTR-2852', firstName: 'Mehdi', lastName: 'Ouazzani', gender: 'Male', age: 23, ageGroup: '18-24', region: 'Rabat-Sale-Kenitra', city: 'Rabat', education: 'Bachelor', registrationDate: '2026-01-28', platformId: 'PLT-002', program: 'Entrepreneurship & Business Development', status: 'Active', email: 'mehdi@example.com', phone: '+212667890123', journeyStep: 3 },
+        { id: 'YTR-2853', firstName: 'Salma', lastName: 'Berrada', gender: 'Female', age: 18, ageGroup: '18-24', region: 'Marrakech-Safi', city: 'Marrakech', education: 'High School', registrationDate: '2026-03-10', platformId: 'PLT-003', program: 'Skills Training & Vocational Education', status: 'Referred', email: 'salma@example.com', phone: '+212678901234', journeyStep: 2 },
+        { id: 'YTR-2854', firstName: 'Imad', lastName: 'Fassi', gender: 'Male', age: 26, ageGroup: '25-30', region: 'Casablanca-Settat', city: 'Casablanca', education: 'Master', registrationDate: '2025-12-15', platformId: 'PLT-001', program: 'Leadership & Civic Engagement', status: 'Completed', email: 'imad@example.com', phone: '+212689012345', journeyStep: 4 }
+    ],
+    programs: [
+        { id: 'PRG-001', name: 'Leadership & Civic Engagement', category: 'Leadership', duration: 12, enrollments: 450, completionRate: 78, description: 'Building tomorrow\'s community leaders through civic participation and governance training.' },
+        { id: 'PRG-002', name: 'Skills Training & Vocational Education', category: 'Vocational', duration: 24, enrollments: 620, completionRate: 71, description: 'Technical and vocational skills for employment in growing sectors.' },
+        { id: 'PRG-003', name: 'Entrepreneurship & Business Development', category: 'Business', duration: 16, enrollments: 380, completionRate: 65, description: 'From idea to business plan — supporting youth-led startups.' }
+    ],
+    messages: [
+        { id: 1, subject: 'Welcome to the Program', body: 'Welcome! Your orientation is scheduled for next Monday.', recipientType: 'All Platforms', sentDate: '2026-05-10', status: 'sent', readCount: 892, totalCount: 1247 },
+        { id: 2, subject: 'Monthly Check-in', body: 'Please update your progress in the portal.', recipientType: 'Casablanca Youth Center', sentDate: '2026-05-09', status: 'sent', readCount: 310, totalCount: 342 },
+        { id: 3, subject: 'Event Invitation: Career Fair', body: 'Join us for the annual career fair on May 20th.', recipientType: 'All Platforms', sentDate: '2026-05-08', status: 'sent', readCount: 756, totalCount: 1247 },
+        { id: 4, subject: 'Data Collection Request', body: 'Please submit your attendance sheets by Friday.', recipientType: 'Rabat Leadership Hub', sentDate: '2026-05-07', status: 'sent', readCount: 145, totalCount: 298 }
+    ],
+    users: [
+        { id: 'USR-001', name: 'Super Admin', email: 'admin@xtrack.ma', role: 'Super Admin', platform: 'All', status: 'Active' },
+        { id: 'USR-002', name: 'Ahmed Benali', email: 'ahmed@xtrack.ma', role: 'Platform Coordinator', platform: 'Casablanca', status: 'Active' },
+        { id: 'USR-003', name: 'Sara Alami', email: 'sara@xtrack.ma', role: 'Platform Coordinator', platform: 'Rabat', status: 'Active' },
+        { id: 'USR-004', name: 'Karim Idrissi', email: 'karim@xtrack.ma', role: 'Data Entry', platform: 'Marrakech', status: 'Active' },
+        { id: 'USR-005', name: 'Laila Bennani', email: 'laila@xtrack.ma', role: 'Platform Coordinator', platform: 'Fes', status: 'Active' }
+    ]
+};
+
+let charts = {};
+
+/* ================= UTILITIES ================= */
+const $ = id => document.getElementById(id);
+const fmtDate = d => new Date(d).toLocaleDateString('en-GB');
+const randId = prefix => prefix + '-' + Math.floor(1000 + Math.random() * 9000);
+const statusBadge = s => {
+    const map = { 'Active':'badge-blue', 'Completed':'badge-green', 'Registered':'badge-gray', 'Referred':'badge-gold', 'Dropped':'badge-red' };
+    return `<span class="badge ${map[s]||'badge-gray'}">${s}</span>`;
+};
+const syncDot = s => {
+    const cls = s==='online'?'status-online':s==='syncing'?'status-syncing':'status-offline';
+    const lbl = s==='online'?'Online':s==='syncing'?'Syncing':'Offline';
+    return `<span style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;"><span class="status-dot ${cls}"></span>${lbl}</span>`;
+};
+
+/* ================= SPLASH & LOGIN ================= */
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        $('splash').classList.add('hide');
+        setTimeout(() => $('splash').style.display = 'none', 600);
+    }, 3000);
+});
+
+function handleLogin(e) {
+    e.preventDefault();
+    $('login-screen').style.display = 'none';
+    $('app').style.display = 'block';
+    initDashboard();
+    renderAll();
+}
+
+function logout() {
+    location.reload();
+}
+
+/* ================= NAVIGATION ================= */
+function showView(viewName) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    $(`view-${viewName}`).classList.add('active');
+    event.currentTarget.classList.add('active');
+    $('page-title').textContent = viewName.charAt(0).toUpperCase() + viewName.slice(1);
+    if (window.innerWidth <= 768) $('sidebar').classList.remove('open');
+    
+    if (viewName === 'dashboard' && !charts.registrations) setTimeout(initDashboard, 50);
+}
+
+function toggleSidebar() {
+    $('sidebar').classList.toggle('open');
+}
+
+/* ================= DASHBOARD CHARTS ================= */
+function initDashboard() {
+    if (charts.registrations) return;
+    
+    charts.registrations = new Chart($('chart-registrations'), {
+        type: 'line',
+        data: {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            datasets: [{
+                label: 'Registrations',
+                data: [120,190,240,310,280,340],
+                borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.08)',
+                tension: 0.4, fill: true, pointRadius: 4, pointBackgroundColor: '#2563EB'
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    charts.gender = new Chart($('chart-gender'), {
+        type: 'doughnut',
+        data: {
+            labels: ['Female','Male'],
+            datasets: [{ data: [58,42], backgroundColor: ['#2563EB','#06B6D4'], borderWidth: 0 }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, cutout: '65%', plugins: { legend: { position: 'bottom' } } }
+    });
+
+    charts.programs = new Chart($('chart-programs'), {
+        type: 'bar',
+        data: {
+            labels: ['Leadership','Skills Training','Entrepreneurship'],
+            datasets: [{
+                label: 'Enrolled',
+                data: [450,620,380],
+                backgroundColor: ['#2563EB','#06B6D4','#F59E0B'],
+                borderRadius: 6
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+
+    charts.age = new Chart($('chart-age'), {
+        type: 'bar',
+        indexAxis: 'y',
+        data: {
+            labels: ['15-17','18-24','25-30','30+'],
+            datasets: [{
+                label: 'Beneficiaries',
+                data: [180,620,340,107],
+                backgroundColor: '#10B981',
+                borderRadius: 6
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+}
+
+/* ================= RENDERERS ================= */
+function renderAll() {
+    renderPlatforms();
+    renderBeneficiaries();
+    renderPrograms();
+    renderMessages();
+    renderCloudDrives();
+    renderUsers();
+    populateSelects();
+}
+
+function renderPlatforms() {
+    $('platforms-grid').innerHTML = store.platforms.map(p => `
+        <div class="platform-card">
+            <div class="platform-header">
+                <div>
+                    <div class="platform-name">${p.name}</div>
+                    <div class="platform-meta"><i class="fas fa-map-marker-alt"></i> ${p.city}, ${p.region}</div>
+                </div>
+                ${syncDot(p.syncStatus)}
+            </div>
+            <div class="platform-stats">
+                <div class="p-stat"><div class="p-stat-value">${p.beneficiaries}</div><div class="p-stat-label">Total</div></div>
+                <div class="p-stat"><div class="p-stat-value">${p.active}</div><div class="p-stat-label">Active</div></div>
+                <div class="p-stat"><div class="p-stat-value">${p.completed}</div><div class="p-stat-label">Completed</div></div>
+            </div>
+            <div class="platform-footer">
+                <div class="coordinator"><div class="user-avatar">${p.coordinator.split(' ').map(n=>n[0]).join('')}</div>${p.coordinator}</div>
+                <div style="display:flex;gap:6px;">
+                    <button class="btn btn-sm btn-secondary" title="Sync" onclick="alert('Sync started for ${p.name}')"><i class="fas fa-sync"></i></button>
+                    <button class="btn btn-sm btn-primary" title="View"><i class="fas fa-eye"></i></button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderBeneficiaries(data = store.beneficiaries) {
+    $('beneficiaries-table').innerHTML = data.map(b => {
+        const platform = store.platforms.find(p => p.id === b.platformId)?.name || b.platformId;
+        return `
+        <tr>
+            <td><strong>${b.id}</strong></td>
+            <td>${b.firstName} ${b.lastName}<div style="font-size:12px;color:var(--color-gray);">${b.gender}, ${b.age} yrs</div></td>
+            <td>${platform}</td>
+            <td>${b.program}</td>
+            <td>${journeyTracker(b.journeyStep, b.status)}</td>
+            <td>${statusBadge(b.status)}</td>
+            <td>
+                <button class="btn btn-sm btn-secondary" style="padding:6px 10px;"><i class="fas fa-edit"></i></button>
+            </td>
+        </tr>`;
+    }).join('');
+}
+
+function journeyTracker(step, status) {
+    const steps = ['1','2','3','4'];
+    let html = '<div class="journey">';
+    steps.forEach((s,i) => {
+        const num = i+1;
+        let cls = '';
+        if (num < step) cls = 'done';
+        else if (num === step && status !== 'Completed' && status !== 'Dropped' && status !== 'Referred') cls = 'active';
+        else if (num === step && status === 'Completed') cls = 'done';
+        html += `<div class="journey-step ${cls}">${num}</div>`;
+        if (i < steps.length-1) html += `<div class="journey-line ${num < step ? 'done' : ''}"></div>`;
+    });
+    return html + '</div>';
+}
+
+function renderPrograms() {
+    $('programs-grid').innerHTML = store.programs.map(p => `
+        <div class="platform-card">
+            <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+                <div class="platform-name">${p.name}</div>
+                <span class="badge badge-blue">${p.category}</span>
+            </div>
+            <div style="font-size:13px;color:var(--color-gray);margin-bottom:16px;">${p.description}</div>
+            <div class="platform-stats" style="border-top:1px solid #f1f5f9;padding-top:16px;">
+                <div class="p-stat"><div class="p-stat-value">${p.enrollments}</div><div class="p-stat-label">Enrolled</div></div>
+                <div class="p-stat"><div class="p-stat-value">${p.duration}w</div><div class="p-stat-label">Duration</div></div>
+                <div class="p-stat"><div class="p-stat-value" style="color:var(--color-green)">${p.completionRate}%</div><div class="p-stat-label">Completion</div></div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderMessages() {
+    $('messages-list').innerHTML = store.messages.map(m => `
+        <div class="message-item">
+            <div class="message-icon"><i class="fas fa-envelope"></i></div>
+            <div class="message-content">
+                <div class="message-subject">${m.subject}</div>
+                <div class="message-preview">${m.body}</div>
+                <div class="message-meta">
+                    <span><i class="fas fa-users"></i> ${m.recipientType}</span>
+                    <span><i class="fas fa-calendar"></i> ${fmtDate(m.sentDate)}</span>
+                    <span><i class="fas fa-check-double" style="color:var(--color-green)"></i> ${m.readCount}/${m.totalCount} read</span>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderCloudDrives() {
+    $('cloud-drives').innerHTML = store.platforms.map(p => `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid #f1f5f9;">
+            <div>
+                <div style="font-weight:600;font-size:14px;">${p.name}</div>
+                <div style="font-size:12px;color:var(--color-gray);">Last sync: ${fmtDate(p.lastSync)}</div>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+                ${syncDot(p.syncStatus)}
+                <button class="btn btn-sm btn-secondary" onclick="alert('Force sync for ${p.name}')">Force Sync</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function renderUsers() {
+    $('users-table').innerHTML = store.users.map(u => `
+        <tr>
+            <td><strong>${u.name}</strong><div style="font-size:12px;color:var(--color-gray);">${u.email}</div></td>
+            <td>${u.role}</td>
+            <td>${u.platform}</td>
+            <td><span class="badge badge-green">${u.status}</span></td>
+        </tr>
+    `).join('');
+}
+
+function populateSelects() {
+    const opts = store.platforms.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+    $('b-platform').innerHTML = '<option value="">Select Platform</option>' + opts;
+}
+
+/* ================= SEARCH & FILTER ================= */
+function searchBeneficiaries(q) {
+    const term = q.toLowerCase();
+    const filtered = store.beneficiaries.filter(b => 
+        b.firstName.toLowerCase().includes(term) || 
+        b.lastName.toLowerCase().includes(term) || 
+        b.id.toLowerCase().includes(term)
+    );
+    renderBeneficiaries(filtered);
+}
+
+function filterBeneficiaries(key, value) {
+    if (!value) { renderBeneficiaries(); return; }
+    const filtered = store.beneficiaries.filter(b => b.status === value);
+    renderBeneficiaries(filtered);
+}
+
+/* ================= MODALS ================= */
+function openModal(id) { $(id).classList.add('show'); }
+function closeModal(id) { $(id).classList.remove('show'); }
+
+// Close modal on outside click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => { if (e.target === overlay) overlay.classList.remove('show'); });
+});
+
+/* ================= CRUD ACTIONS ================= */
+function addPlatform() {
+    const name = $('p-name').value;
+    if (!name) return alert('Please enter a platform name');
+    const newP = {
+        id: randId('PLT'), name, region: $('p-region').value, city: $('p-city').value,
+        address: $('p-address').value, coordinator: $('p-coord').value || 'Unassigned',
+        syncStatus: 'online', lastSync: new Date().toISOString(), beneficiaries: 0, active: 0, completed: 0
+    };
+    store.platforms.push(newP);
+    renderPlatforms(); renderCloudDrives(); populateSelects();
+    closeModal('modal-platform');
+    // clear form
+    ['p-name','p-region','p-city','p-address','p-coord','p-onedrive'].forEach(id => $(id).value = '');
+}
+
+function addBeneficiary() {
+    const fname = $('b-fname').value, lname = $('b-lname').value;
+    if (!fname || !lname) return alert('Please enter first and last name');
+    const platformId = $('b-platform').value || 'PLT-001';
+    const platform = store.platforms.find(p => p.id === platformId);
+    const newB = {
+        id: randId('YTR'), firstName: fname, lastName: lname,
+        gender: $('b-gender').value, age: 20, ageGroup: '18-24',
+        region: platform?.region || '', city: platform?.city || '',
+        education: 'High School', registrationDate: new Date().toISOString().split('T')[0],
+        platformId, program: $('b-program').value, status: 'Registered',
+        email: $('b-email').value || '', phone: $('b-phone').value || '', journeyStep: 1
+    };
+    store.beneficiaries.unshift(newB);
+    if (platform) { platform.beneficiaries++; platform.active++; }
+    renderBeneficiaries(); renderPlatforms();
+    // Update KPIs
+    $('kpi-total').textContent = (parseInt($('kpi-total').textContent.replace(/,/g,'')) + 1).toLocaleString();
+    closeModal('modal-beneficiary');
+    ['b-fname','b-lname','b-email','b-phone'].forEach(id => $(id).value = '');
+}
+
+function sendMessage() {
+    const subj = $('m-subject').value, body = $('m-body').value;
+    if (!subj || !body) return alert('Please fill subject and message');
+    store.messages.unshift({
+        id: store.messages.length + 1, subject: subj, body, recipientType: $('m-recipient').options[$('m-recipient').selectedIndex].text,
+        sentDate: new Date().toISOString().split('T')[0], status: 'sent', readCount: 0, totalCount: 1247
+    });
+    renderMessages();
+    closeModal('modal-message');
+    $('m-subject').value = ''; $('m-body').value = '';
+}
+</script>
+</body>
+</html>
