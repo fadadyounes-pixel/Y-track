@@ -1,0 +1,204 @@
+import Link from "next/link";
+
+const colors = {
+  dark: "#0F172A",
+  darkGray: "#1E293B",
+  primary: "#2563EB",
+  cyan: "#06B6D4",
+  gold: "#F59E0B",
+  gray: "#94A3B8",
+  light: "#F8FAFC",
+  white: "#FFFFFF",
+  ideamapTeal: "#006B5C",
+};
+
+export default function LandingPage() {
+  return (
+    <main style={{ minHeight: "100vh", background: colors.light, color: colors.darkGray }}>
+      <header
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "20px 40px",
+          background: colors.dark,
+          color: colors.white,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <svg width="36" height="36" viewBox="0 0 200 200">
+            <circle cx="100" cy="100" r="80" fill="none" stroke={colors.primary} strokeWidth="10" />
+            <path
+              d="M 75 60 L 100 100 L 125 60 M 100 100 L 100 150"
+              fill="none"
+              stroke="#ffffff"
+              strokeWidth="14"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+            <circle cx="100" cy="40" r="8" fill={colors.gold} />
+          </svg>
+          <span style={{ fontWeight: 800, fontSize: 20, letterSpacing: 1 }}>Y-TRACK</span>
+        </div>
+        <nav style={{ display: "flex", gap: 24, fontSize: 14, fontWeight: 500, color: colors.gray }}>
+          <a href="#programs" style={{ color: "inherit", textDecoration: "none" }}>
+            Programmes
+          </a>
+          <a href="#ideamap" style={{ color: "inherit", textDecoration: "none" }}>
+            IdeaMap
+          </a>
+          <Link href="/ideamap" style={{ color: colors.white, textDecoration: "none", fontWeight: 700 }}>
+            Se connecter →
+          </Link>
+        </nav>
+      </header>
+
+      <section
+        style={{
+          background: `linear-gradient(135deg, ${colors.dark} 0%, ${colors.darkGray} 100%)`,
+          color: colors.white,
+          padding: "96px 40px",
+          textAlign: "center",
+        }}
+      >
+        <div style={{ maxWidth: 720, margin: "0 auto" }}>
+          <div
+            style={{
+              display: "inline-block",
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: colors.cyan,
+              marginBottom: 16,
+            }}
+          >
+            Youth Tracking, Reporting &amp; Knowledge System
+          </div>
+          <h1 style={{ fontSize: 44, fontWeight: 800, lineHeight: 1.15, margin: "0 0 20px" }}>
+            Un seul portail pour suivre, financer et faire grandir
+            <br />
+            les initiatives citoyennes.
+          </h1>
+          <p style={{ fontSize: 16, color: colors.gray, lineHeight: 1.6, margin: "0 auto 36px", maxWidth: 560 }}>
+            Y-TRACK relie porteurs de projets, coordinateurs et administrateurs autour d&apos;un
+            même parcours : de l&apos;idée au dossier de financement INDH prêt à déposer.
+          </p>
+          <Link
+            href="/ideamap"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 10,
+              background: colors.ideamapTeal,
+              color: "white",
+              padding: "14px 28px",
+              borderRadius: 10,
+              fontWeight: 700,
+              fontSize: 15,
+              textDecoration: "none",
+            }}
+          >
+            Ouvrir IdeaMap
+            <span aria-hidden>→</span>
+          </Link>
+        </div>
+      </section>
+
+      <section id="ideamap" style={{ padding: "72px 40px", maxWidth: 1040, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: colors.ideamapTeal,
+              marginBottom: 12,
+            }}
+          >
+            Module IdeaMap
+          </div>
+          <h2 style={{ fontSize: 30, fontWeight: 800, color: colors.dark, margin: "0 0 12px" }}>
+            De l&apos;idée au dossier INDH, en 8 étapes guidées par l&apos;IA
+          </h2>
+          <p style={{ color: "#475569", maxWidth: 620, margin: "0 auto" }}>
+            IdeaMap accompagne chaque porteur de projet : idée, dialogue avec l&apos;assistant IA,
+            plan d&apos;affaires, budget, conformité INDH, documents et export du dossier final.
+          </p>
+        </div>
+
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 20,
+          }}
+        >
+          {[
+            ["💡", "Idée", "Décrivez votre projet en langage simple."],
+            ["💬", "Dialogue IA", "5 questions ciblées pour structurer le projet."],
+            ["📄", "Plan & Budget", "Business plan et budget générés automatiquement."],
+            ["✅", "Conformité", "Score et recommandations selon les critères INDH."],
+            ["📎", "Documents", "Liste des pièces justificatives à fournir."],
+            ["📤", "Dossier final", "Export et taux de préparation global."],
+          ].map(([icon, title, desc]) => (
+            <div
+              key={title}
+              style={{
+                background: "white",
+                border: "1px solid #e2e8f0",
+                borderRadius: 12,
+                padding: 24,
+              }}
+            >
+              <div style={{ fontSize: 26, marginBottom: 10 }}>{icon}</div>
+              <div style={{ fontWeight: 700, color: colors.dark, marginBottom: 6 }}>{title}</div>
+              <div style={{ fontSize: 13, color: "#64748b", lineHeight: 1.5 }}>{desc}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        id="programs"
+        style={{ padding: "56px 40px", background: colors.white, borderTop: "1px solid #e2e8f0" }}
+      >
+        <div
+          style={{
+            maxWidth: 1040,
+            margin: "0 auto",
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: 24,
+            textAlign: "center",
+          }}
+        >
+          {[
+            ["100 000 MAD", "Subvention maximale par projet"],
+            ["85% / 15%", "Contribution INDH / porteur"],
+            ["4", "Piliers de la Phase 3 de l'INDH"],
+            ["10", "Secteurs éligibles"],
+          ].map(([value, label]) => (
+            <div key={label}>
+              <div style={{ fontSize: 26, fontWeight: 800, color: colors.dark }}>{value}</div>
+              <div style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <footer
+        style={{
+          padding: "24px 40px",
+          background: colors.dark,
+          color: colors.gray,
+          fontSize: 12,
+          textAlign: "center",
+        }}
+      >
+        © 2026 Y-TRACK · IdeaMap · Initiative Nationale pour le Développement Humain
+      </footer>
+    </main>
+  );
+}
