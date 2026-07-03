@@ -81,7 +81,12 @@ export default function IdeaMapPage() {
   async function runDialogueCall(idea: string, msgsSoFar: ChatMessage[], callNumber: number) {
     setBusy(true);
     try {
-      const text = await ai(buildDialogueMessages(idea, msgsSoFar), dialogueSystemPrompt(lang, idea, callNumber));
+      const text = await ai(
+        buildDialogueMessages(idea, msgsSoFar),
+        dialogueSystemPrompt(lang, idea, callNumber),
+        1200,
+        callNumber < 5 ? "chat" : "json"
+      );
       if (callNumber < 5) {
         updateHolder({ msgs: [...msgsSoFar, { role: "assistant", content: text }], qN: callNumber });
       } else {
@@ -100,12 +105,16 @@ export default function IdeaMapPage() {
     try {
       const planText = await ai(
         [{ role: "user", content: JSON.stringify(proj) }],
-        businessPlanSystemPrompt(lang)
+        businessPlanSystemPrompt(lang),
+        1200,
+        "json"
       );
       const plan = parseJSON<BusinessPlan>(planText);
       const budgetText = await ai(
         [{ role: "user", content: JSON.stringify(proj) }],
-        budgetSystemPrompt(lang)
+        budgetSystemPrompt(lang),
+        1200,
+        "json"
       );
       const budget = parseJSON<Budget>(budgetText);
       updateHolder({ plan, budget });
@@ -121,7 +130,9 @@ export default function IdeaMapPage() {
     try {
       const text = await ai(
         [{ role: "user", content: JSON.stringify({ proj, plan, budget }) }],
-        complianceSystemPrompt(lang)
+        complianceSystemPrompt(lang),
+        1200,
+        "json"
       );
       const comp = parseJSON<ComplianceReport>(text);
       updateHolder({ comp });

@@ -35,6 +35,22 @@ funding application — and turns weeks of guesswork into a structured, self-che
 
 Coordinators and admins get dashboards to track holders and manage the platform.
 
+## Rafiq — the AI engine
+
+Every AI call in IdeaMap goes through **Rafiq** ("companion" / "guide" in Arabic), a
+small router in `app/api/ai/providers.ts` rather than a single hardcoded model. Rafiq
+sends each call to whichever configured provider suits the task, and falls back to the
+next one automatically if a provider is unavailable or rate-limited:
+
+| Task | Preferred provider | Why |
+|---|---|---|
+| Structured JSON (profile, plan, budget, compliance) | Gemini | Native structured-output mode |
+| Short dialogue questions | Groq | Fast, free, no structure needed |
+| Either, when configured | Claude | Best quality we've measured |
+
+You only need one provider's API key to run IdeaMap. Configuring more than one just
+gives Rafiq somewhere to fall back to. See [Environment Variables](#environment-variables).
+
 ## Impact
 
 | | Without IdeaMap | With IdeaMap |
@@ -79,15 +95,16 @@ formats.
 ### Prerequisites
 
 - Node.js 18+
-- An Anthropic API key
+- At least one AI provider API key (Gemini and Groq both have free tiers — see
+  [Environment Variables](#environment-variables))
 
 ### Setup
 
 ```bash
 npm install
 
-# Create environment file
-echo "ANTHROPIC_API_KEY=sk-ant-..." > .env.local
+# Create environment file — see .env.local.example for all supported providers
+cp .env.local.example .env.local
 
 npm run dev
 ```
@@ -112,7 +129,12 @@ npm start
 
 | Variable | Required | Description |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | Yes | Anthropic API key for all AI calls |
+| `ANTHROPIC_API_KEY` | At least one of these three | Claude — Rafiq's first choice when set |
+| `GEMINI_API_KEY` | At least one of these three | Google Gemini (free tier) — Rafiq's pick for structured JSON steps |
+| `GROQ_API_KEY` | At least one of these three | Groq (free tier) — Rafiq's pick for the dialogue questions |
+| `CLAUDE_MODEL` | No | Overrides the default `claude-sonnet-5` |
+| `GEMINI_MODEL` | No | Overrides the default `gemini-2.5-flash` |
+| `GROQ_MODEL` | No | Overrides the default `llama-3.3-70b-versatile` |
 
 ## Feature backlog
 

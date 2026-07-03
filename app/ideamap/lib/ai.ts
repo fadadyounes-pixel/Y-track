@@ -5,11 +5,16 @@ export interface AIMessage {
   content: string;
 }
 
-export async function ai(messages: AIMessage[], system: string, max_tokens = 1200): Promise<string> {
+/** "chat" = short conversational text (routed to Groq first). "json" = a structured
+ * object IdeaMap needs to parse (routed to Gemini first, which supports native
+ * structured output). See app/api/ai/providers.ts ("Rafiq") for the full routing. */
+export type AIMode = "chat" | "json";
+
+export async function ai(messages: AIMessage[], system: string, max_tokens = 1200, mode: AIMode = "chat"): Promise<string> {
   const r = await fetch("/api/ai", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ messages, system, max_tokens }),
+    body: JSON.stringify({ messages, system, max_tokens, mode }),
   });
   if (!r.ok) throw new Error(`AI request failed (${r.status})`);
   const d = await r.json();

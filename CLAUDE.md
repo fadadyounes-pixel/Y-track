@@ -11,7 +11,8 @@ to a full business plan, budget, compliance report and document checklist.
 
 - Landing page: `app/page.tsx`
 - IdeaMap: `app/ideamap/` (route `/ideamap`)
-- AI proxy: `app/api/ai/route.ts` (keeps `ANTHROPIC_API_KEY` server-side only)
+- AI proxy: `app/api/ai/route.ts` → `app/api/ai/providers.ts` ("Rafiq" — keeps all
+  provider API keys server-side only)
 
 ## Tech stack
 
@@ -20,7 +21,7 @@ to a full business plan, budget, compliance report and document checklist.
 | Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Inline React styles (no Tailwind/CSS modules) — see `app/ideamap/lib/ui.ts` for shared style snippets and `app/ideamap/lib/constants.ts` for design tokens (`COLORS`, `RADIUS`) |
-| AI model | `claude-sonnet-4-20250514` via `@anthropic-ai/sdk`, called only from `app/api/ai/route.ts` |
+| AI engine | "Rafiq" (`app/api/ai/providers.ts`) — routes each call to Claude / Gemini / Groq by task, with automatic fallback. See its header comment for the routing rules |
 | Fonts | Poppins (Latin) · Tajawal (Arabic), loaded via Google Fonts in `app/layout.tsx` |
 | Analytics | `@vercel/analytics` |
 | Persistence | Browser `localStorage` (`app/ideamap/lib/storage.ts`) — no backend yet, see Feature Backlog |
@@ -40,7 +41,7 @@ app/ideamap/
     ├── types.ts       # HolderState, ProjectProfile, BusinessPlan, Budget, ComplianceReport…
     ├── constants.ts   # design tokens, INDH domain facts (sectors, pillars, jury grid, documents)
     ├── i18n.ts        # TX dictionary (fr/ar/en) + t(), pillarLabel(), dir(), fontFamily()
-    ├── ai.ts          # client ai() fetch helper + system-prompt builders + parseJSON()
+    ├── ai.ts          # client ai() fetch helper (chat|json mode) + system-prompt builders + parseJSON()
     ├── ui.ts          # shared inline-style objects (card, btnPrimary, input, …)
     ├── storage.ts     # localStorage-backed holder/coordinator persistence
     └── utils.ts       # readinessPercent(), stepProgressPercent(), formatMAD()
@@ -62,9 +63,10 @@ AI calls are triggered by a `useEffect` keyed on `holder.step`, not by button cl
 buttons just advance `step`, and the effect fires the right AI call if the target data
 (`proj` / `plan` / `comp`) isn't there yet. This keeps step components pure/presentational.
 
-Dialogue is 5 sequential AI calls: calls 1–4 ask one short question each (plain text),
-call 5 returns the structured `ProjectProfile` JSON. See `dialogueSystemPrompt()` in
-`lib/ai.ts` — the branch is `questionNumber < 5` (ask) vs `>= 5` (summarize).
+Dialogue is 5 sequential AI calls: calls 1–4 ask one short question each (plain text,
+`mode: "chat"`), call 5 returns the structured `ProjectProfile` JSON (`mode: "json"`).
+See `dialogueSystemPrompt()` in `lib/ai.ts` — the branch is `questionNumber < 5` (ask)
+vs `>= 5` (summarize).
 
 ### Internationalization
 
@@ -87,7 +89,9 @@ to switch to Tajawal for Arabic.
 
 | Variable | Required | Description |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | Yes | Used only by `app/api/ai/route.ts` |
+| `ANTHROPIC_API_KEY` | At least one of these three | Rafiq's first choice when set |
+| `GEMINI_API_KEY` | At least one of these three | Free tier — Rafiq's pick for JSON steps |
+| `GROQ_API_KEY` | At least one of these three | Free tier — Rafiq's pick for dialogue questions |
 
 ## Known gaps / backlog
 
