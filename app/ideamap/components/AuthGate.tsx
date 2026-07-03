@@ -80,192 +80,142 @@ export default function AuthGate({
       style={{
         minHeight: "100vh",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: `radial-gradient(circle at 15% 15%, ${COLORS.primaryContainer} 0%, ${COLORS.background} 45%)`,
+        background: COLORS.background,
         fontFamily: fontFamily(lang),
-        padding: 20,
+        padding: "20px 20px 32px",
       }}
     >
-      <div style={{ width: "100%", maxWidth: 440 }}>
-        <div
-          style={{
-            background: COLORS.surface,
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: RADIUS.xl,
-            boxShadow: "0 2px 2px rgba(26,28,30,0.04), 0 20px 40px rgba(26,28,30,0.06)",
-            padding: "40px 36px",
-          }}
-        >
-          <div style={{ display: "flex", justifyContent: "center", marginBottom: 12 }}>
-            <Logo size={64} />
+      <div style={{ width: "100%", maxWidth: 340 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 40 }}>
+          <Logo size={52} />
+          <div style={{ fontSize: 19, fontWeight: 800, color: COLORS.onSurface, marginTop: 14 }}>
+            {tr("appName")}
           </div>
-          <h1
-            style={{
-              textAlign: "center",
-              fontSize: 24,
-              fontWeight: 800,
-              color: COLORS.primaryDark,
-              margin: "0 0 4px",
-            }}
-          >
-            {needsSignup ? tr("authNewHolder") : tr("authTitle")}
-          </h1>
-          <p style={{ textAlign: "center", fontSize: 13, color: COLORS.onSurfaceVariant, margin: "0 0 28px" }}>
-            {tr("authSubtitle")}
+          <p style={{ fontSize: 13.5, color: COLORS.onSurfaceVariant, marginTop: 6, textAlign: "center" }}>
+            {needsSignup ? tr("authNewHolder") : tr("authSubtitle")}
           </p>
+        </div>
 
-          <form onSubmit={handleSubmit}>
-            {!needsSignup && (
-              <div style={{ marginBottom: 18 }}>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: COLORS.primaryDark,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                    marginBottom: 8,
-                  }}
-                >
-                  {tr("authCodeLabel")}
-                </label>
-                <input
-                  value={code}
-                  onChange={(e) => {
-                    setCode(e.target.value);
-                    setError(null);
-                  }}
-                  placeholder={tr("authCodePlaceholder")}
-                  required
-                  style={{
-                    width: "100%",
-                    padding: "14px 16px",
-                    borderRadius: RADIUS.md,
-                    border: `1.5px solid ${error ? COLORS.red : COLORS.border}`,
-                    fontSize: 15,
-                    fontWeight: 600,
-                    outline: "none",
-                    boxSizing: "border-box",
-                  }}
-                />
-                <p style={{ fontSize: 12, color: COLORS.onSurfaceVariant, marginTop: 8 }}>
-                  {tr("authCodeHint")}
-                </p>
-              </div>
-            )}
+        <form onSubmit={handleSubmit}>
+          {!needsSignup && (
+            <div style={{ marginBottom: 20 }}>
+              <input
+                value={code}
+                onChange={(e) => {
+                  setCode(e.target.value);
+                  setError(null);
+                }}
+                placeholder={tr("authCodePlaceholder")}
+                required
+                autoFocus
+                style={{
+                  width: "100%",
+                  padding: "12px 2px",
+                  border: "none",
+                  borderBottom: `1.5px solid ${error ? COLORS.red : COLORS.border}`,
+                  background: "transparent",
+                  fontSize: 16,
+                  fontWeight: 600,
+                  color: COLORS.onSurface,
+                  outline: "none",
+                  boxSizing: "border-box",
+                  textAlign: "center",
+                }}
+              />
+              <p style={{ fontSize: 11.5, color: COLORS.onSurfaceVariant, marginTop: 10, textAlign: "center" }}>
+                {tr("authCodeHint")}
+              </p>
+            </div>
+          )}
 
-            {needsSignup && (
-              <div style={{ marginBottom: 18 }}>
-                <div
-                  style={{
-                    background: COLORS.surfaceContainerLow,
-                    border: `1px solid ${COLORS.border}`,
-                    borderRadius: RADIUS.md,
-                    padding: "10px 14px",
-                    fontSize: 13,
-                    fontWeight: 700,
-                    color: COLORS.primaryDark,
-                    marginBottom: 16,
-                  }}
-                >
-                  CIN: {code.trim().toUpperCase()}
-                </div>
-                <label
-                  style={{
-                    display: "block",
-                    fontSize: 12,
-                    fontWeight: 700,
-                    color: COLORS.primaryDark,
-                    textTransform: "uppercase",
-                    letterSpacing: 0.5,
-                    marginBottom: 8,
-                  }}
-                >
-                  {tr("authNameLabel")}
-                </label>
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={tr("authNamePlaceholder")}
-                  required
-                  autoFocus
-                  style={{
-                    width: "100%",
-                    padding: "14px 16px",
-                    borderRadius: RADIUS.md,
-                    border: `1.5px solid ${COLORS.border}`,
-                    fontSize: 15,
-                    fontWeight: 600,
-                    outline: "none",
-                    boxSizing: "border-box",
-                  }}
-                />
-              </div>
-            )}
-
-            {error && (
+          {needsSignup && (
+            <div style={{ marginBottom: 20 }}>
               <div
                 style={{
-                  background: COLORS.redContainer,
-                  color: COLORS.red,
-                  borderRadius: RADIUS.md,
-                  padding: "10px 14px",
-                  fontSize: 13,
-                  fontWeight: 600,
+                  fontSize: 12.5,
+                  fontWeight: 700,
+                  color: COLORS.onSurfaceVariant,
+                  textAlign: "center",
                   marginBottom: 16,
                 }}
               >
-                {error}
+                {code.trim().toUpperCase()}
               </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={submitting}
-              style={{
-                width: "100%",
-                background: COLORS.primaryDark,
-                color: "white",
-                border: "none",
-                borderRadius: RADIUS.md,
-                padding: "14px 16px",
-                fontSize: 15,
-                fontWeight: 700,
-                cursor: submitting ? "default" : "pointer",
-                opacity: submitting ? 0.7 : 1,
-              }}
-            >
-              {submitting ? tr("loading") : needsSignup ? tr("authCreateAccount") : tr("authSubmit")}
-            </button>
-
-            {needsSignup && (
-              <button
-                type="button"
-                onClick={() => {
-                  setNeedsSignup(false);
-                  setName("");
-                }}
+              <input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={tr("authNamePlaceholder")}
+                required
+                autoFocus
                 style={{
                   width: "100%",
-                  background: "transparent",
-                  color: COLORS.onSurfaceVariant,
+                  padding: "12px 2px",
                   border: "none",
-                  padding: "12px 0 0",
-                  fontSize: 13,
+                  borderBottom: `1.5px solid ${COLORS.border}`,
+                  background: "transparent",
+                  fontSize: 16,
                   fontWeight: 600,
-                  cursor: "pointer",
-                  textDecoration: "underline",
+                  color: COLORS.onSurface,
+                  outline: "none",
+                  boxSizing: "border-box",
+                  textAlign: "center",
                 }}
-              >
-                {tr("authBackToLogin")}
-              </button>
-            )}
-          </form>
-        </div>
+              />
+            </div>
+          )}
 
-        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 24 }}>
+          {error && (
+            <p style={{ color: COLORS.red, fontSize: 12.5, fontWeight: 600, textAlign: "center", marginBottom: 16 }}>
+              {error}
+            </p>
+          )}
+
+          <button
+            type="submit"
+            disabled={submitting}
+            style={{
+              width: "100%",
+              background: COLORS.primaryDark,
+              color: "white",
+              border: "none",
+              borderRadius: RADIUS.md,
+              padding: "13px 16px",
+              fontSize: 14.5,
+              fontWeight: 700,
+              cursor: submitting ? "default" : "pointer",
+              opacity: submitting ? 0.7 : 1,
+            }}
+          >
+            {submitting ? tr("loading") : needsSignup ? tr("authCreateAccount") : tr("authSubmit")}
+          </button>
+
+          {needsSignup && (
+            <button
+              type="button"
+              onClick={() => {
+                setNeedsSignup(false);
+                setName("");
+              }}
+              style={{
+                width: "100%",
+                background: "transparent",
+                color: COLORS.onSurfaceVariant,
+                border: "none",
+                padding: "14px 0 0",
+                fontSize: 12.5,
+                fontWeight: 600,
+                cursor: "pointer",
+              }}
+            >
+              {tr("authBackToLogin")}
+            </button>
+          )}
+        </form>
+
+        <div style={{ display: "flex", justifyContent: "center", gap: 16, marginTop: 36 }}>
           {(["fr", "ar", "en"] as Lang[]).map((l) => (
             <button
               key={l}
@@ -283,19 +233,18 @@ export default function AuthGate({
             </button>
           ))}
         </div>
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: 11,
-            color: COLORS.gray,
-            textTransform: "uppercase",
-            letterSpacing: 1.5,
-            marginTop: 20,
-          }}
-        >
-          {tr("authOfficialPortal")}
-        </p>
       </div>
+      <p
+        style={{
+          fontSize: 10.5,
+          color: COLORS.gray,
+          textTransform: "uppercase",
+          letterSpacing: 1.5,
+          marginTop: 40,
+        }}
+      >
+        {tr("authOfficialPortal")}
+      </p>
     </main>
   );
 }
