@@ -57,7 +57,7 @@ Respond with ONLY a JSON object (no markdown, no commentary) matching exactly th
   "estimatedBudget": number,
   "pillar": string
 }
-"pillar" must be one of: "Rural development", "Territorial reduction of poverty", "Human dignity", "Horizontal programs".`;
+"pillar" must be one of: "Infrastructure and basic services", "Social inclusion of vulnerable people", "Economic inclusion of youth", "Human capital development".`;
 }
 
 export function businessPlanSystemPrompt(lang: Lang): string {

@@ -75,8 +75,11 @@ to switch to Tajawal for Arabic.
 
 ## INDH domain facts (`lib/constants.ts`)
 
-- Max grant per project: 100,000 MAD · INDH 85% / holder 15%
-- 4 pillars, 10 eligible sectors, 12 documents (8 required + 4 optional)
+- Phase 3 (2019–2023+): 18B MAD envelope, 62,000+ projects financed, 12M direct beneficiaries
+- Max grant per project: 100,000 MAD · INDH 85% / holder 15% (in practice 80–90% / 10–20%)
+- 4 official strategic axes (`PILLARS`): infrastructure & basic services, social inclusion of
+  vulnerable people, economic inclusion of youth, human capital development
+- 10 eligible sectors, 12 documents (8 required + 4 optional)
 - Jury grid: impact 25, viability 20, relevance 20, management 15, sustainability 10,
   innovation 10 (100 pts total)
 

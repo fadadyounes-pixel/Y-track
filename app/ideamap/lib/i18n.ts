@@ -150,14 +150,16 @@ export const TX: Record<Lang, Dict> = {
     exportDownloadPlan: "Télécharger le plan d'affaires",
     exportDownloadBudget: "Télécharger le budget",
     exportDownloadCompliance: "Télécharger le rapport de conformité",
+    exportDownloadDocuments: "Télécharger la checklist des documents",
+    exportDownloadGuide: "Télécharger le guide de soumission",
     exportDownloadAll: "Exporter le dossier complet",
     exportNewProject: "Démarrer un nouveau projet",
 
-    // Pillars
-    pillar_Rural_development: "Développement rural",
-    "pillar_Territorial_reduction_of_poverty": "Réduction territoriale de la pauvreté",
-    pillar_Human_dignity: "Dignité humaine",
-    pillar_Horizontal_programs: "Programmes horizontaux",
+    // The 4 official INDH Phase 3 strategic axes
+    pillar_Infrastructure_and_basic_services: "Rattrapage des déficits en infrastructures et services de base",
+    pillar_Social_inclusion_of_vulnerable_people: "Inclusion sociale des personnes en situation de précarité",
+    pillar_Economic_inclusion_of_youth: "Inclusion économique des jeunes porteurs de projets",
+    pillar_Human_capital_development: "Développement du capital humain des générations montantes",
 
     // Coordinator dashboard
     coordTitle: "Tableau de bord Coordinateur",
@@ -315,13 +317,15 @@ export const TX: Record<Lang, Dict> = {
     exportDownloadPlan: "تحميل خطة العمل",
     exportDownloadBudget: "تحميل الميزانية",
     exportDownloadCompliance: "تحميل تقرير المطابقة",
+    exportDownloadDocuments: "تحميل لائحة الوثائق",
+    exportDownloadGuide: "تحميل دليل الإيداع",
     exportDownloadAll: "تصدير الملف كاملاً",
     exportNewProject: "بدء مشروع جديد",
 
-    pillar_Rural_development: "التنمية القروية",
-    "pillar_Territorial_reduction_of_poverty": "الحد الترابي من الفقر",
-    pillar_Human_dignity: "الكرامة الإنسانية",
-    pillar_Horizontal_programs: "البرامج الأفقية",
+    pillar_Infrastructure_and_basic_services: "تدارك العجز في البنيات التحتية والخدمات الأساسية",
+    pillar_Social_inclusion_of_vulnerable_people: "الإدماج الاجتماعي للأشخاص في وضعية هشاشة",
+    pillar_Economic_inclusion_of_youth: "الإدماج الاقتصادي لحاملي المشاريع الشباب",
+    pillar_Human_capital_development: "تنمية الرأسمال البشري للأجيال الصاعدة",
 
     coordTitle: "لوحة تحكم المنسق",
     coordSubtitle: "متابعة تقدم حاملي المشاريع",
@@ -478,13 +482,15 @@ export const TX: Record<Lang, Dict> = {
     exportDownloadPlan: "Download business plan",
     exportDownloadBudget: "Download budget",
     exportDownloadCompliance: "Download compliance report",
+    exportDownloadDocuments: "Download document checklist",
+    exportDownloadGuide: "Download submission guide",
     exportDownloadAll: "Export full dossier",
     exportNewProject: "Start a new project",
 
-    pillar_Rural_development: "Rural development",
-    "pillar_Territorial_reduction_of_poverty": "Territorial reduction of poverty",
-    pillar_Human_dignity: "Human dignity",
-    pillar_Horizontal_programs: "Horizontal programs",
+    pillar_Infrastructure_and_basic_services: "Closing infrastructure and basic-services gaps",
+    pillar_Social_inclusion_of_vulnerable_people: "Social inclusion of vulnerable people",
+    pillar_Economic_inclusion_of_youth: "Economic inclusion of young project holders",
+    pillar_Human_capital_development: "Human capital development for the next generation",
 
     coordTitle: "Coordinator dashboard",
     coordSubtitle: "Track project holders' progress",

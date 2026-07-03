@@ -105,6 +105,101 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section style={{ padding: "64px 40px", background: colors.dark, color: colors.white }}>
+        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: colors.cyan,
+              textAlign: "center",
+              marginBottom: 12,
+            }}
+          >
+            L&apos;INDH à grande échelle
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+              gap: 24,
+              textAlign: "center",
+              marginBottom: 56,
+            }}
+          >
+            {[
+              ["18 milliards MAD", "Enveloppe de la Phase 3 (2019–2023+)"],
+              ["62 000+", "Projets financés à ce jour"],
+              ["12 millions", "Bénéficiaires directs"],
+              ["100 000 MAD", "Financement max. par projet"],
+            ].map(([value, label]) => (
+              <div key={label}>
+                <div style={{ fontSize: 24, fontWeight: 800 }}>{value}</div>
+                <div style={{ fontSize: 12.5, color: colors.gray, marginTop: 4 }}>{label}</div>
+              </div>
+            ))}
+          </div>
+
+          <div
+            style={{
+              fontSize: 12,
+              fontWeight: 700,
+              letterSpacing: 2,
+              textTransform: "uppercase",
+              color: colors.cyan,
+              textAlign: "center",
+              marginBottom: 12,
+            }}
+          >
+            Le défi que résout IdeaMap
+          </div>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 1,
+              background: "rgba(255,255,255,0.1)",
+              border: "1px solid rgba(255,255,255,0.1)",
+              borderRadius: 12,
+              overflow: "hidden",
+            }}
+          >
+            <div style={{ background: colors.darkGray, padding: 28 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: colors.gray, textTransform: "uppercase", marginBottom: 16 }}>
+                Sans accompagnement
+              </div>
+              {[
+                ["< 30 %", "des dossiers soumis sont complets"],
+                ["6–8 semaines", "de préparation en moyenne"],
+                ["3 langues", "une barrière pour de nombreux porteurs"],
+              ].map(([value, label]) => (
+                <div key={label} style={{ marginBottom: 14 }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: "#F87171" }}>{value}</span>
+                  <span style={{ fontSize: 13, color: colors.gray, marginLeft: 10 }}>{label}</span>
+                </div>
+              ))}
+            </div>
+            <div style={{ background: colors.darkGray, padding: 28 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, color: colors.ideamapTeal, textTransform: "uppercase", marginBottom: 16 }}>
+                Avec IdeaMap
+              </div>
+              {[
+                ["< 1 heure", "pour un dossier structuré et chiffré"],
+                ["3 langues", "français, arabe (RTL) et anglais, nativement"],
+                ["1 score", "de conformité avant même le dépôt"],
+              ].map(([value, label]) => (
+                <div key={label} style={{ marginBottom: 14 }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: "#34D399" }}>{value}</span>
+                  <span style={{ fontSize: 13, color: colors.gray, marginLeft: 10 }}>{label}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="ideamap" style={{ padding: "72px 40px", maxWidth: 1040, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <div
@@ -177,7 +272,7 @@ export default function LandingPage() {
           {[
             ["100 000 MAD", "Subvention maximale par projet"],
             ["85% / 15%", "Contribution INDH / porteur"],
-            ["4", "Piliers de la Phase 3 de l'INDH"],
+            ["4", "Axes stratégiques de la Phase 3"],
             ["10", "Secteurs éligibles"],
           ].map(([value, label]) => (
             <div key={label}>

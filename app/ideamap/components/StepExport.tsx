@@ -1,8 +1,8 @@
 "use client";
 
-import { COLORS } from "../lib/constants";
+import { COLORS, REQUIRED_DOCUMENTS } from "../lib/constants";
 import { t } from "../lib/i18n";
-import { HolderState } from "../lib/types";
+import { HolderState, Lang } from "../lib/types";
 import { docsCompletion, formatMAD, readinessPercent } from "../lib/utils";
 import * as ui from "../lib/ui";
 
@@ -51,6 +51,34 @@ function budgetText(state: HolderState): string {
   ].join("\n");
 }
 
+function documentsChecklistText(state: HolderState, lang: Lang): string {
+  const { proj, docs } = state;
+  const lines = REQUIRED_DOCUMENTS.map((d) => {
+    const label = t(lang, `doc_${d.id}`);
+    const tag = d.required ? t(lang, "documentsRequired") : t(lang, "documentsOptional");
+    const mark = docs[d.id] ? "[x]" : "[ ]";
+    return `${mark} ${label} — ${tag}`;
+  });
+  return [`CHECKLIST — ${proj?.projectName ?? state.cin}`, "=".repeat(40), ...lines].join("\n");
+}
+
+function submissionGuideText(state: HolderState, lang: Lang): string {
+  const { proj } = state;
+  return [
+    `GUIDE DE SOUMISSION — ${proj?.projectName ?? state.cin}`,
+    "=".repeat(40),
+    "1. Rassemblez les 8 documents obligatoires (voir checklist).",
+    "2. Faites viser le dossier par le président de la structure porteuse.",
+    "3. Déposez le dossier auprès de la Division de l'Action Sociale (DAS) de votre province.",
+    "4. La DAS instruit le dossier et le transmet au Comité Provincial de Développement Humain (CPDH).",
+    "5. Le CPDH évalue le projet selon la grille du jury (100 pts) et notifie sa décision.",
+    "6. En cas d'avis favorable, la convention de financement est signée avant le premier versement.",
+    "",
+    `Score de conformité au moment de l'export : ${state.comp?.score ?? "—"}/100.`,
+    "Contacts utiles : Division de l'Action Sociale de votre province, coordinateur INDH régional.",
+  ].join("\n");
+}
+
 function complianceText(state: HolderState): string {
   const { comp, proj } = state;
   if (!comp || !proj) return "";
@@ -66,7 +94,7 @@ function complianceText(state: HolderState): string {
   ].join("\n\n");
 }
 
-export default function StepExport({ lang, state, onRestart }: { lang: import("../lib/types").Lang; state: HolderState; onRestart: () => void }) {
+export default function StepExport({ lang, state, onRestart }: { lang: Lang; state: HolderState; onRestart: () => void }) {
   const tr = (k: string) => t(lang, k);
   const readiness = readinessPercent(state);
   const { done, total } = docsCompletion(state.docs);
@@ -132,6 +160,18 @@ export default function StepExport({ lang, state, onRestart }: { lang: import(".
         <button style={ui.btnSecondary} onClick={() => download(`${state.cin}-compliance.txt`, complianceText(state))}>
           🛡️ {tr("exportDownloadCompliance")}
         </button>
+        <button
+          style={ui.btnSecondary}
+          onClick={() => download(`${state.cin}-checklist.txt`, documentsChecklistText(state, lang))}
+        >
+          📎 {tr("exportDownloadDocuments")}
+        </button>
+        <button
+          style={ui.btnSecondary}
+          onClick={() => download(`${state.cin}-guide-soumission.txt`, submissionGuideText(state, lang))}
+        >
+          📖 {tr("exportDownloadGuide")}
+        </button>
       </div>
 
       <div style={{ textAlign: "right", display: "flex", justifyContent: "flex-end", gap: 12 }}>
@@ -143,7 +183,13 @@ export default function StepExport({ lang, state, onRestart }: { lang: import(".
           onClick={() =>
             download(
               `${state.cin}-dossier-complet.txt`,
-              [planText(state), budgetText(state), complianceText(state)].join("\n\n" + "=".repeat(60) + "\n\n")
+              [
+                planText(state),
+                budgetText(state),
+                complianceText(state),
+                documentsChecklistText(state, lang),
+                submissionGuideText(state, lang),
+              ].join("\n\n" + "=".repeat(60) + "\n\n")
             )
           }
         >

@@ -29,11 +29,12 @@ export const MAX_GRANT_MAD = 100000;
 export const INDH_SHARE = 0.85;
 export const HOLDER_SHARE = 0.15;
 
+// The 4 official INDH Phase 3 strategic axes.
 export const PILLARS = [
-  "Rural development",
-  "Territorial reduction of poverty",
-  "Human dignity",
-  "Horizontal programs",
+  "Infrastructure and basic services",
+  "Social inclusion of vulnerable people",
+  "Economic inclusion of youth",
+  "Human capital development",
 ] as const;
 
 export const SECTORS = [
