@@ -33,14 +33,16 @@ downloadable jury presentation.
 app/ideamap/
 ├── page.tsx                 # orchestrator: auth, AI call sequencing, step routing
 ├── components/
-│   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup
-│   ├── Shell.tsx              # sidebar + topbar layout for the 9-step workflow
-│   ├── Step*.tsx               # one component per workflow step (incl. StepLogo.tsx)
+│   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup — CareerMap-style dark
+│   │                          screen with live role detection (icon/color/CTA react to the code
+│   │                          being typed, using a local AUTH_COLORS palette, not lib/constants.ts)
+│   ├── Shell.tsx              # sidebar + topbar layout for the 10-step workflow
+│   ├── Step*.tsx               # one component per workflow step (incl. StepInfo.tsx, StepLogo.tsx)
 │   ├── CoordinatorDashboard.tsx
 │   └── AdminDashboard.tsx
 └── lib/
-    ├── types.ts       # HolderState, ProjectProfile, BusinessPlan, Budget, ComplianceReport, LogoState…
-    ├── constants.ts   # design tokens, INDH domain facts (sectors, pillars, jury grid, documents)
+    ├── types.ts       # HolderState, PersonalInfo, ProjectProfile, BusinessPlan, Budget, ComplianceReport, LogoState…
+    ├── constants.ts   # design tokens, INDH domain facts (sectors, pillars, jury grid, documents, Moroccan regions)
     ├── i18n.ts        # TX dictionary (fr/ar/en) + t(), pillarLabel(), dir(), fontFamily()
     ├── ai.ts          # client ai() fetch helper (chat|json mode) + system-prompt builders (all grounded via indhContext()) + parseJSON()
     ├── logo.ts        # renderLogoSvg() (generated logo badge), rasterizeImage(), getLogoPngDataUrl()
@@ -58,9 +60,16 @@ app/ideamap/
   `listCoordinators()` — coordinators are created by an Admin, never self-signup.
 - Admin: hardcoded `@adminINDH`.
 
-### The 9-step workflow (`app/ideamap/page.tsx`)
+### The 10-step workflow (`app/ideamap/page.tsx`)
 
-`idea → dialogue → profile → plan → budget → logo → compliance → documents → export`
+`info → idea → dialogue → profile → plan → budget → logo → compliance → documents → export`
+
+`info` (`StepInfo.tsx`) collects the holder's personal profile — name, email, phone,
+age group, gender, education level, occupation status, region (+ prefecture, only for
+Casablanca-Settat), and an optional photo — into `HolderState.info: PersonalInfo`.
+It only runs once: `newHolderState()` sets a brand-new holder's `step` to `"info"`,
+and submitting it moves straight to `"idea"`, so it's never shown again on return visits.
+`emptyPersonalInfo()` and the region/prefecture lists live in `lib/constants.ts`.
 
 AI calls are triggered by a `useEffect` keyed on `holder.step`, not by button clicks directly —
 buttons just advance `step`, and the effect fires the right AI call if the target data
@@ -119,6 +128,16 @@ to switch to Tajawal for Arabic.
 | `GEMINI_API_KEY` | At least one of these three | Free tier — Rafiq's first choice for JSON steps |
 | `GROQ_API_KEY` | At least one of these three | Free tier — Rafiq's first choice for dialogue questions |
 | `OPENROUTER_API_KEY` | At least one of these three | Free tier — third fallback for either step type |
+
+## Dashboards
+
+Both `AdminDashboard.tsx` and `CoordinatorDashboard.tsx` surface each holder's
+`info` (contact + region) alongside their step/readiness, for follow-up purposes.
+The Admin dashboard additionally has a search box, region/gender filters, a
+Female % KPI, and a "Export CSV" button (`downloadCsv()`) that dumps all holders'
+identity, contact, and readiness data as a semicolon-separated CSV. Neither dashboard
+copies the CareerMap dark visual theme — only the auth screen does; dashboards
+stay on the light `COLORS` theme.
 
 ## Known gaps / backlog
 

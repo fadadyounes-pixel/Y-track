@@ -3,6 +3,7 @@ export type Lang = "fr" | "ar" | "en";
 export type Role = "holder" | "coordinator" | "admin";
 
 export type StepId =
+  | "info"
   | "idea"
   | "dialogue"
   | "profile"
@@ -12,6 +13,24 @@ export type StepId =
   | "compliance"
   | "documents"
   | "export";
+
+export type Gender = "male" | "female" | "other";
+export type EducationLevel = "college" | "bac" | "bac2" | "bac3" | "bac5" | "doctorat";
+export type OccupationStatus = "student" | "jobseeker" | "employed" | "selfemployed";
+
+export interface PersonalInfo {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  ageGroup: string;
+  gender: Gender | "";
+  educationLevel: EducationLevel | "";
+  occupationStatus: OccupationStatus | "";
+  region: string;
+  prefecture?: string;
+  photoDataUrl?: string;
+}
 
 export interface ChatMessage {
   role: "user" | "assistant";
@@ -119,5 +138,6 @@ export interface HolderState {
   docs: DocumentsState;
   uploads: UploadsState;
   logo: LogoState | null;
+  info: PersonalInfo;
   coordinatorCode?: string;
 }

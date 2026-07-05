@@ -85,7 +85,7 @@ IdeaMap orients every project toward the axis it best serves:
 
 | Role | Access code | What they see |
 |---|---|---|
-| **Holder** | CIN, e.g. `AB123456` | The 9-step workflow, resumable across visits |
+| **Holder** | CIN, e.g. `AB123456` | The 10-step workflow, resumable across visits |
 | **Coordinator** | `@NAMECOD`, created by an Admin | Dashboard of all holders + progress |
 | **Admin** | `@adminINDH` | Platform stats, project list, coordinator management |
 

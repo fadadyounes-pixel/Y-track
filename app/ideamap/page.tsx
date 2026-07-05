@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import AuthGate, { AuthResult } from "./components/AuthGate";
 import Shell from "./components/Shell";
+import StepInfo from "./components/StepInfo";
 import StepIdea from "./components/StepIdea";
 import StepDialogue from "./components/StepDialogue";
 import StepProfile from "./components/StepProfile";
@@ -201,6 +202,7 @@ export default function IdeaMapPage() {
   if (!holder) return null;
 
   const stepTitleKey: Record<StepId, string> = {
+    info: "navInfo",
     idea: "navIdea",
     dialogue: "navDialogue",
     profile: "navProfile",
@@ -222,6 +224,15 @@ export default function IdeaMapPage() {
       onLogout={handleLogout}
       title={t(lang, stepTitleKey[holder.step])}
     >
+      {holder.step === "info" && (
+        <StepInfo
+          lang={lang}
+          cin={holder.cin}
+          info={holder.info}
+          onSubmit={(info) => updateHolder({ info, step: "idea" })}
+        />
+      )}
+
       {holder.step === "idea" && (
         <StepIdea
           lang={lang}
@@ -324,7 +335,9 @@ export default function IdeaMapPage() {
         <StepExport
           lang={lang}
           state={holder}
-          onRestart={() => updateHolder(newHolderState(holder.cin, holder.name, holder.coordinatorCode))}
+          onRestart={() =>
+            updateHolder({ ...newHolderState(holder.cin, holder.name, holder.coordinatorCode), info: holder.info, step: "idea" })
+          }
         />
       )}
     </Shell>

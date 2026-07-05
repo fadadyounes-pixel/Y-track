@@ -1,4 +1,4 @@
-import { emptyDocsState } from "./constants";
+import { emptyDocsState, emptyPersonalInfo } from "./constants";
 import { HolderState } from "./types";
 
 const HOLDER_KEY = (cin: string) => `ideamap:holder:${cin.toUpperCase()}`;
@@ -33,7 +33,7 @@ export function newHolderState(cin: string, name: string, coordinatorCode?: stri
     cin: cin.toUpperCase(),
     name,
     createdAt: new Date().toISOString(),
-    step: "idea",
+    step: "info",
     idea: "",
     msgs: [],
     qN: 0,
@@ -44,6 +44,7 @@ export function newHolderState(cin: string, name: string, coordinatorCode?: stri
     docs: emptyDocsState(),
     uploads: {},
     logo: null,
+    info: emptyPersonalInfo(),
     coordinatorCode,
   };
 }
@@ -53,7 +54,7 @@ export function loadHolder(cin: string): HolderState | null {
   if (!state) return null;
   // Backfills fields added after some holders were already saved, so older
   // records don't crash newer code that expects them to exist.
-  return { uploads: {}, logo: null, ...state } as HolderState;
+  return { uploads: {}, logo: null, info: emptyPersonalInfo(), ...state } as HolderState;
 }
 
 export function saveHolder(state: HolderState) {

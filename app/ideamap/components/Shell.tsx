@@ -6,6 +6,7 @@ import { t, dir, fontFamily } from "../lib/i18n";
 import { Lang, StepId } from "../lib/types";
 
 const STEP_ICON: Record<StepId, string> = {
+  info: "🪪",
   idea: "💡",
   dialogue: "💬",
   profile: "🪪",
@@ -18,6 +19,7 @@ const STEP_ICON: Record<StepId, string> = {
 };
 
 const STEP_NAV_KEY: Record<StepId, string> = {
+  info: "navInfo",
   idea: "navIdea",
   dialogue: "navDialogue",
   profile: "navProfile",

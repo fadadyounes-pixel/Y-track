@@ -1,13 +1,43 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Logo from "./Logo";
-import { COLORS, RE_COORD } from "../lib/constants";
+import { COLORS, MOROCCAN_REGIONS, RE_COORD } from "../lib/constants";
 import { t, dir, fontFamily, pillarLabel } from "../lib/i18n";
-import { Lang } from "../lib/types";
+import { HolderState, Lang } from "../lib/types";
 import { addCoordinator, listCoordinators, listHolders } from "../lib/storage";
 import { readinessPercent } from "../lib/utils";
 import * as ui from "../lib/ui";
+
+function holderDisplayName(h: HolderState): string {
+  const full = [h.info.firstName, h.info.lastName].filter(Boolean).join(" ");
+  return full || h.name || h.cin;
+}
+
+function downloadCsv(holders: HolderState[]) {
+  const header = ["CIN", "Name", "Email", "Phone", "Region", "Gender", "Age group", "Project", "Pillar", "Eligible", "Readiness %"];
+  const rows = holders.map((h) => [
+    h.cin,
+    holderDisplayName(h),
+    h.info.email,
+    h.info.phone,
+    h.info.region,
+    h.info.gender,
+    h.info.ageGroup,
+    h.proj?.projectName || "",
+    h.proj?.pillar || "",
+    h.comp ? (h.comp.eligible ? "yes" : "no") : "",
+    String(readinessPercent(h)),
+  ]);
+  const csv = [header, ...rows].map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(";")).join("\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "ideamap-holders.csv";
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function StatCard({ label, value }: { label: string; value: React.ReactNode }) {
   return (
@@ -35,6 +65,9 @@ export default function AdminDashboard({
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
+  const [search, setSearch] = useState("");
+  const [regionFilter, setRegionFilter] = useState("");
+  const [genderFilter, setGenderFilter] = useState("");
 
   useEffect(() => {
     setHolders(listHolders());
@@ -45,6 +78,22 @@ export default function AdminDashboard({
     ? Math.round(holders.reduce((s, h) => s + readinessPercent(h), 0) / holders.length)
     : 0;
   const eligibleCount = holders.filter((h) => h.comp?.eligible).length;
+  const femalePercent = holders.length
+    ? Math.round((holders.filter((h) => h.info.gender === "female").length / holders.length) * 100)
+    : 0;
+
+  const filteredHolders = useMemo(() => {
+    const q = search.trim().toLowerCase();
+    return holders.filter((h) => {
+      if (regionFilter && h.info.region !== regionFilter) return false;
+      if (genderFilter && h.info.gender !== genderFilter) return false;
+      if (q) {
+        const haystack = `${holderDisplayName(h)} ${h.cin} ${h.info.email}`.toLowerCase();
+        if (!haystack.includes(q)) return false;
+      }
+      return true;
+    });
+  }, [holders, search, regionFilter, genderFilter]);
 
   function handleAddCoordinator(e: React.FormEvent) {
     e.preventDefault();
@@ -107,19 +156,65 @@ export default function AdminDashboard({
           <StatCard label={tr("adminTotalCoordinators")} value={coordinators.length} />
           <StatCard label={tr("adminAvgReadiness")} value={`${avgReadiness}%`} />
           <StatCard label={tr("adminEligible")} value={eligibleCount} />
+          <StatCard label={tr("adminFemalePercent")} value={`${femalePercent}%`} />
         </div>
 
         <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr", gap: 24, alignItems: "start" }}>
           <div style={{ ...ui.card, padding: 0 }}>
-            <div style={{ padding: "16px 24px", borderBottom: `1px solid ${COLORS.border}`, fontWeight: 700, fontSize: 14 }}>
-              {tr("adminProjects")} ({holders.length})
+            <div
+              style={{
+                padding: "16px 24px",
+                borderBottom: `1px solid ${COLORS.border}`,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                flexWrap: "wrap",
+              }}
+            >
+              <div style={{ fontWeight: 700, fontSize: 14, marginInlineEnd: "auto" }}>
+                {tr("adminProjects")} ({filteredHolders.length})
+              </div>
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={tr("adminSearchPlaceholder")}
+                style={{ ...ui.input, width: 200, padding: "8px 12px", fontSize: 12.5 }}
+              />
+              <select
+                value={regionFilter}
+                onChange={(e) => setRegionFilter(e.target.value)}
+                style={{ ...ui.input, width: 160, padding: "8px 12px", fontSize: 12.5 }}
+              >
+                <option value="">{tr("adminAllRegions")}</option>
+                {MOROCCAN_REGIONS.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={genderFilter}
+                onChange={(e) => setGenderFilter(e.target.value)}
+                style={{ ...ui.input, width: 130, padding: "8px 12px", fontSize: 12.5 }}
+              >
+                <option value="">{tr("fieldGender")}</option>
+                <option value="male">{tr("infoGenderMale")}</option>
+                <option value="female">{tr("infoGenderFemale")}</option>
+                <option value="other">{tr("infoGenderOther")}</option>
+              </select>
+              <button
+                onClick={() => downloadCsv(filteredHolders)}
+                style={{ ...ui.btnSecondary, padding: "8px 14px", fontSize: 12.5 }}
+              >
+                📄 {tr("adminExportCsv")}
+              </button>
             </div>
-            {holders.length === 0 ? (
+            {filteredHolders.length === 0 ? (
               <div style={{ padding: 40, textAlign: "center", color: COLORS.onSurfaceVariant, fontSize: 14 }}>
-                {tr("adminNoProjects")}
+                {holders.length === 0 ? tr("adminNoProjects") : tr("adminNoResults")}
               </div>
             ) : (
-              holders.map((h) => (
+              filteredHolders.map((h) => (
                 <div
                   key={h.cin}
                   style={{
@@ -132,9 +227,14 @@ export default function AdminDashboard({
                   }}
                 >
                   <div style={{ minWidth: 160 }}>
-                    <div style={{ fontWeight: 700, fontSize: 14 }}>{h.proj?.projectName || h.name || h.cin}</div>
+                    <div style={{ fontWeight: 700, fontSize: 14 }}>{h.proj?.projectName || holderDisplayName(h)}</div>
                     <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant }}>{h.cin}</div>
                   </div>
+                  <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant, minWidth: 150 }}>
+                    {h.info.email && <div>{h.info.email}</div>}
+                    {h.info.phone && <div>{h.info.phone}</div>}
+                  </div>
+                  <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant, minWidth: 130 }}>{h.info.region || "—"}</div>
                   <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant }}>
                     {h.proj ? pillarLabel(lang, h.proj.pillar) : "—"}
                   </div>

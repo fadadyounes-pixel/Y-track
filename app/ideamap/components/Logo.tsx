@@ -1,6 +1,13 @@
 import { COLORS } from "../lib/constants";
 
-export default function Logo({ size = 48 }: { size?: number }) {
+export default function Logo({
+  size = 48,
+  markColor = COLORS.onSurface,
+}: {
+  size?: number;
+  /** Stroke color for the Y-mark — override on dark backgrounds where the default (near-black) would be invisible. */
+  markColor?: string;
+}) {
   return (
     <svg width={size} height={size} viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
       <circle cx="100" cy="100" r="80" fill="none" stroke={COLORS.primary} strokeWidth="10" />
@@ -8,7 +15,7 @@ export default function Logo({ size = 48 }: { size?: number }) {
       <path
         d="M 75 65 L 100 105 L 125 65 M 100 105 L 100 145"
         fill="none"
-        stroke={COLORS.onSurface}
+        stroke={markColor}
         strokeWidth="14"
         strokeLinecap="round"
         strokeLinejoin="round"

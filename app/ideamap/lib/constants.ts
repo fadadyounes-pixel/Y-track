@@ -1,4 +1,4 @@
-import { DocumentsState } from "./types";
+import { DocumentsState, PersonalInfo } from "./types";
 
 // Design tokens — from the IdeaMap "Modern Architectural" design system
 // (Vibrant Teal on Cool Gray / Deep Charcoal).
@@ -82,10 +82,62 @@ export const REQUIRED_DOCUMENTS: DocDef[] = [
 export const emptyDocsState = (): DocumentsState =>
   Object.fromEntries(REQUIRED_DOCUMENTS.map((d) => [d.id, false]));
 
+// The 12 Moroccan administrative regions, plus the prefectures shown only
+// when Region = Casablanca-Settat (mirrors the reference profile form).
+export const MOROCCAN_REGIONS = [
+  "Tanger-Tétouan-Al Hoceïma",
+  "Oriental",
+  "Fès-Meknès",
+  "Rabat-Salé-Kénitra",
+  "Béni Mellal-Khénifra",
+  "Casablanca-Settat",
+  "Marrakech-Safi",
+  "Drâa-Tafilalet",
+  "Souss-Massa",
+  "Guelmim-Oued Noun",
+  "Laâyoune-Sakia El Hamra",
+  "Dakhla-Oued Ed-Dahab",
+] as const;
+
+export const CASABLANCA_PREFECTURES = [
+  "Casablanca",
+  "Mohammedia",
+  "El Jadida",
+  "Settat",
+  "Berrechid",
+  "Nouaceur",
+  "Médiouna",
+  "Benslimane",
+  "Sidi Bennour",
+] as const;
+
+export const AGE_GROUPS = ["15-17", "18-20", "21-24", "25-30", "31-40", "40+"] as const;
+
+export const emptyPersonalInfo = (): PersonalInfo => ({
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+  ageGroup: "",
+  gender: "",
+  educationLevel: "",
+  occupationStatus: "",
+  region: "",
+  prefecture: "",
+  photoDataUrl: "",
+});
+
+export const RE_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+export const RE_PHONE = /^[+]?[\d\s\-().]{8,15}$/;
+
+// Info comes first — the personal profile is collected once, before the
+// holder ever starts describing their project, then skipped on every return
+// visit since `step` has already moved past it.
 // Logo comes right after plan + budget — by then there's enough substance
 // (the business model, the numbers) to inform a good logo and presentation,
 // and it still comes well before the paperwork-heavy documents step.
 export const STEP_ORDER = [
+  "info",
   "idea",
   "dialogue",
   "profile",

@@ -10,11 +10,13 @@ import { readinessPercent, stepProgressPercent } from "../lib/utils";
 import * as ui from "../lib/ui";
 
 const STEP_LABEL_KEY: Record<string, string> = {
+  info: "navInfo",
   idea: "navIdea",
   dialogue: "navDialogue",
   profile: "navProfile",
   plan: "navPlan",
   budget: "navBudget",
+  logo: "navLogo",
   compliance: "navCompliance",
   documents: "navDocuments",
   export: "navExport",
@@ -117,10 +119,15 @@ export default function CoordinatorDashboard({
                 >
                   <div style={{ minWidth: 160 }}>
                     <div style={{ fontWeight: 700, fontSize: 14, color: COLORS.onSurface }}>
-                      {h.name || h.cin}
+                      {[h.info.firstName, h.info.lastName].filter(Boolean).join(" ") || h.name || h.cin}
                     </div>
                     <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant }}>{h.cin}</div>
                   </div>
+                  <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant, minWidth: 150 }}>
+                    {h.info.email && <div>{h.info.email}</div>}
+                    {h.info.phone && <div>{h.info.phone}</div>}
+                  </div>
+                  <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant, minWidth: 120 }}>{h.info.region || "—"}</div>
                   <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant, minWidth: 140 }}>
                     {tr("coordStep")}: <strong style={{ color: COLORS.onSurface }}>{tr(STEP_LABEL_KEY[h.step])}</strong>
                   </div>
