@@ -189,8 +189,17 @@ export default function AuthGate({
 
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 400 }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
-          <IdeaMapMark size={88} />
-          <div style={{ fontSize: 22, fontWeight: 800, color: AUTH_COLORS.white, marginTop: 14 }}>
+          <IdeaMapMark size={92} />
+          <div
+            style={{
+              fontSize: 30,
+              fontWeight: 800,
+              color: AUTH_COLORS.white,
+              marginTop: 16,
+              textTransform: "uppercase",
+              letterSpacing: 0.5,
+            }}
+          >
             Idea<span style={{ color: "#2B5CFF" }}>Map</span>
           </div>
         </div>
