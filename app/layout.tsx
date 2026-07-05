@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/react";
 
 export const metadata: Metadata = {
-  title: "Y-TRACK",
-  description: "Y-TRACK — youth & citizen program platform, home of IdeaMap.",
+  title: "IdeaMap",
+  description: "IdeaMap — AI-powered INDH funding application assistant for Moroccan citizens.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

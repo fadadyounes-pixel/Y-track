@@ -1,7 +1,7 @@
 # Y-TRACK · IdeaMap
 
 AI-powered INDH funding application assistant for Moroccan citizens.
-Route: `/ideamap` inside the Y-TRACK Next.js app.
+IdeaMap is the app itself — it's served at `/` (and `/ideamap`).
 
 ## Context: the INDH at scale
 
@@ -145,7 +145,7 @@ cp .env.local.example .env.local
 npm run dev
 ```
 
-App runs at `http://localhost:3000`, IdeaMap at `http://localhost:3000/ideamap`.
+App runs at `http://localhost:3000`.
 
 ### Build for production
 

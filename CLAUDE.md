@@ -10,8 +10,9 @@ an AI-powered assistant that walks a Moroccan citizen through building an INDH
 to a full business plan, budget, compliance report, document checklist, logo, and a
 downloadable jury presentation.
 
-- Landing page: `app/page.tsx`
-- IdeaMap: `app/ideamap/` (route `/ideamap`)
+- IdeaMap lives at `app/ideamap/` and is the site itself: `app/page.tsx` just
+  re-exports it (`export { default } from "./ideamap/page"`), so `/` and `/ideamap`
+  both render the same app — there is no separate marketing landing page anymore.
 - AI proxy: `app/api/ai/route.ts` → `app/api/ai/providers.ts` ("Rafiq" — keeps all
   provider API keys server-side only)
 
