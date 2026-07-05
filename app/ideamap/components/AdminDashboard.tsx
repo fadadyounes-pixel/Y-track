@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import Logo from "./Logo";
+import IdeaMapMark from "./IdeaMapMark";
 import { COLORS, MOROCCAN_REGIONS, RE_COORD } from "../lib/constants";
 import { t, dir, fontFamily, pillarLabel } from "../lib/i18n";
 import { HolderState, Lang } from "../lib/types";
@@ -122,7 +122,7 @@ export default function AdminDashboard({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Logo size={32} />
+          <IdeaMapMark size={32} leftColor={COLORS.onSurface} holeColor={COLORS.surface} />
           <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.onSurface }}>{tr("adminTitle")}</div>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>

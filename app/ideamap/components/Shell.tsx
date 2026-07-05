@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "./Logo";
+import IdeaMapMark from "./IdeaMapMark";
 import { COLORS, STEP_ORDER } from "../lib/constants";
 import { t, dir, fontFamily } from "../lib/i18n";
 import { Lang, StepId } from "../lib/types";
@@ -72,7 +72,7 @@ export default function Shell({
           }}
         >
           <div style={{ padding: "24px 20px", display: "flex", alignItems: "center", gap: 12 }}>
-            <Logo size={36} />
+            <IdeaMapMark size={36} />
             <div>
               <div style={{ fontWeight: 800, fontSize: 16 }}>{tr("appName")}</div>
               <div style={{ fontSize: 10, opacity: 0.6, textTransform: "uppercase", letterSpacing: 1 }}>

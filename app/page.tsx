@@ -1,15 +1,17 @@
 import Link from "next/link";
+import IdeaMapMark from "./ideamap/components/IdeaMapMark";
 
+// Aligned with the IdeaMap brand mark (navy / white / blue / gold).
 const colors = {
-  dark: "#0F172A",
-  darkGray: "#1E293B",
-  primary: "#2563EB",
-  cyan: "#06B6D4",
-  gold: "#F59E0B",
+  dark: "#0A0F2C",
+  darkGray: "#141B45",
+  primary: "#2B5CFF",
+  cyan: "#2B5CFF",
+  gold: "#E8B84B",
   gray: "#94A3B8",
   light: "#F8FAFC",
   white: "#FFFFFF",
-  ideamapTeal: "#006B5C",
+  ideamapTeal: "#2B5CFF",
 };
 
 export default function LandingPage() {
@@ -26,18 +28,7 @@ export default function LandingPage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <svg width="36" height="36" viewBox="0 0 200 200">
-            <circle cx="100" cy="100" r="80" fill="none" stroke={colors.primary} strokeWidth="10" />
-            <path
-              d="M 75 60 L 100 100 L 125 60 M 100 100 L 100 150"
-              fill="none"
-              stroke="#ffffff"
-              strokeWidth="14"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <circle cx="100" cy="40" r="8" fill={colors.gold} />
-          </svg>
+          <IdeaMapMark size={36} />
           <span style={{ fontWeight: 800, fontSize: 20, letterSpacing: 1 }}>Y-TRACK</span>
         </div>
         <nav style={{ display: "flex", gap: 24, fontSize: 14, fontWeight: 500, color: colors.gray }}>

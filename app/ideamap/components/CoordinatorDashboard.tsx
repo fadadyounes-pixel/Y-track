@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Logo from "./Logo";
+import IdeaMapMark from "./IdeaMapMark";
 import { COLORS, STEP_ORDER } from "../lib/constants";
 import { t, dir, fontFamily } from "../lib/i18n";
 import { Lang } from "../lib/types";
@@ -53,7 +53,7 @@ export default function CoordinatorDashboard({
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <Logo size={32} />
+          <IdeaMapMark size={32} leftColor={COLORS.onSurface} holeColor={COLORS.surface} />
           <div>
             <div style={{ fontWeight: 800, fontSize: 16, color: COLORS.onSurface }}>{tr("coordTitle")}</div>
             <div style={{ fontSize: 12, color: COLORS.onSurfaceVariant }}>{coordCode}</div>

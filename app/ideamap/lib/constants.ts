@@ -1,7 +1,7 @@
 import { DocumentsState, PersonalInfo } from "./types";
 
-// Design tokens — from the IdeaMap "Modern Architectural" design system
-// (Vibrant Teal on Cool Gray / Deep Charcoal).
+// Design tokens — aligned with the IdeaMap brand mark (navy / white / blue /
+// gold), so the whole app matches the login screen and logo lockup.
 export const COLORS = {
   background: "#F5F7F9",
   surface: "#FFFFFF",
@@ -10,13 +10,13 @@ export const COLORS = {
   border: "#E2E8F0",
   onSurface: "#1A1C1E",
   onSurfaceVariant: "#3C4A46",
-  primary: "#00BFA5",
-  primaryDark: "#006B5C",
+  primary: "#2B5CFF",
+  primaryDark: "#0A0F2C",
   onPrimary: "#FFFFFF",
-  primaryContainer: "#E5F8F4",
-  inverseSurface: "#1A1C1E",
-  inverseOnSurface: "#EFF1F3",
-  gold: "#F59E0B",
+  primaryContainer: "#E8EEFF",
+  inverseSurface: "#0A0F2C",
+  inverseOnSurface: "#FFFFFF",
+  gold: "#E8B84B",
   red: "#BA1A1A",
   redContainer: "#FFDAD6",
   green: "#10B981",
