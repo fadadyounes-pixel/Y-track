@@ -1,5 +1,4 @@
 import Link from "next/link";
-import IdeaMapMark from "./ideamap/components/IdeaMapMark";
 
 // Aligned with the IdeaMap brand mark (navy / white / blue / gold).
 const colors = {
@@ -28,7 +27,6 @@ export default function LandingPage() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <IdeaMapMark size={36} />
           <span style={{ fontWeight: 800, fontSize: 20, letterSpacing: 1 }}>Y-TRACK</span>
         </div>
         <nav style={{ display: "flex", gap: 24, fontSize: 14, fontWeight: 500, color: colors.gray }}>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import IdeaMapMark from "./IdeaMapMark";
 import { RE_HOLDER, RE_COORD, ADMIN_CODE } from "../lib/constants";
 import { t, dir, fontFamily } from "../lib/i18n";
 import { Lang, Role } from "../lib/types";
@@ -13,10 +12,7 @@ export interface AuthResult {
   coordCode?: string;
 }
 
-// Navy / white / blue / gold theme for the auth screen only — built around
-// the IdeaMap brain+pin mark and its brand lockup (wordmark, divider dot,
-// tagline). The rest of the page chrome stays strictly navy/white (plus the
-// error color).
+// Navy / white / blue theme for the auth screen only.
 const AUTH_COLORS = {
   navy: "#0A0F2C",
   navySecondary: "#141B45",
@@ -26,7 +22,6 @@ const AUTH_COLORS = {
   inputFill: "#F5F6F8",
   inputBorder: "#DDE0E8",
   error: "#C0632F",
-  gold: "#E8B84B",
 };
 
 type LiveRole = "holder" | "coordinator" | "admin" | "unknown" | "empty";
@@ -191,38 +186,8 @@ export default function AuthGate({
 
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 400 }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
-          <IdeaMapMark size={100} />
-          <div
-            style={{
-              fontSize: 34,
-              fontWeight: 800,
-              color: AUTH_COLORS.white,
-              marginTop: 10,
-              textTransform: "uppercase",
-              letterSpacing: 0.5,
-              whiteSpace: "nowrap",
-            }}
-          >
-            Idea <span style={{ color: "#2B5CFF" }}>Map</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14, width: 240 }}>
-            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
-            <div style={{ width: 6, height: 6, borderRadius: "50%", background: AUTH_COLORS.gold }} />
-            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
-          </div>
-          <div
-            style={{
-              fontSize: 11,
-              letterSpacing: 1.5,
-              color: AUTH_COLORS.white,
-              marginTop: 12,
-              fontWeight: 700,
-              whiteSpace: "nowrap",
-              textTransform: "uppercase",
-            }}
-          >
-            Mapping <span style={{ color: AUTH_COLORS.gold }}>Talent</span>. Guiding{" "}
-            <span style={{ color: AUTH_COLORS.gold }}>Futures</span>.
+          <div style={{ fontSize: 30, fontWeight: 800, color: AUTH_COLORS.white }}>
+            Idea<span style={{ color: "#2B5CFF" }}>Map</span>
           </div>
         </div>
 

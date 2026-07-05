@@ -21,7 +21,7 @@ downloadable jury presentation.
 |---|---|
 | Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
-| Styling | Inline React styles (no Tailwind/CSS modules) — see `app/ideamap/lib/ui.ts` for shared style snippets and `app/ideamap/lib/constants.ts` for design tokens (`COLORS`, `RADIUS`). `COLORS.primary`/`primaryDark`/`gold` are the brand blue (`#2B5CFF`), navy (`#0A0F2C`), and gold (`#E8B84B`) from the `IdeaMapMark` logo — the whole app (landing page, sidebar, dashboards) is themed off this one palette, not a separate design system |
+| Styling | Inline React styles (no Tailwind/CSS modules) — see `app/ideamap/lib/ui.ts` for shared style snippets and `app/ideamap/lib/constants.ts` for design tokens (`COLORS`, `RADIUS`). `COLORS.primary`/`primaryDark`/`gold` are brand blue (`#2B5CFF`), navy (`#0A0F2C`), and gold (`#E8B84B`) — the whole app (landing page, sidebar, dashboards) is themed off this palette. There is no logo mark anywhere in the app — every screen uses the plain "IdeaMap" / "Y-TRACK" text wordmark only |
 | AI engine | "Rafiq" (`app/api/ai/providers.ts`) — routes each call to Gemini / Groq / OpenRouter by task, with automatic fallback. All three are free tiers; there is no paid AI provider in this codebase. See its header comment for the routing rules |
 | Fonts | Poppins (Latin) · Tajawal (Arabic), loaded via Google Fonts in `app/layout.tsx` |
 | Analytics | `@vercel/analytics` |
@@ -34,12 +34,9 @@ app/ideamap/
 ├── page.tsx                 # orchestrator: auth, AI call sequencing, step routing
 ├── components/
 │   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup — navy/white/blue screen
-│   │                          built around the IdeaMapMark brain+pin brand mark, with live role
-│   │                          detection (icon/label react to the code being typed), using a local
-│   │                          AUTH_COLORS palette scoped to this screen only, not lib/constants.ts
-│   ├── IdeaMapMark.tsx        # brain-into-map-pin brand mark SVG — the one logo component used
-│   │                          everywhere (auth screen, sidebar, dashboards, landing page); takes
-│   │                          leftColor/holeColor props so it adapts to dark vs. light backgrounds
+│   │                          with live role detection (icon/label react to the code being typed),
+│   │                          using a local AUTH_COLORS palette scoped to this screen only, not
+│   │                          lib/constants.ts. No logo mark — just the "IdeaMap" text wordmark
 │   ├── Shell.tsx              # sidebar + topbar layout for the 10-step workflow
 │   ├── Step*.tsx               # one component per workflow step (incl. StepInfo.tsx, StepLogo.tsx)
 │   ├── CoordinatorDashboard.tsx
@@ -141,9 +138,8 @@ The Admin dashboard additionally has a search box, region/gender filters, a
 Female % KPI, and a "Export CSV" button (`downloadCsv()`) that dumps all holders'
 identity, contact, and readiness data as a semicolon-separated CSV. Both dashboards
 stay on the light `COLORS` surface (white cards on a light gray background) — only
-their header logo (`IdeaMapMark` with `leftColor={COLORS.onSurface}`) and accent
-colors (buttons, links) pick up the brand blue/navy, matching the auth screen and
-landing page without going fully dark.
+their accent colors (buttons, links) pick up the brand blue/navy, matching the auth
+screen and landing page without going fully dark.
 
 ## Known gaps / backlog
 
