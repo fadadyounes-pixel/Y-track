@@ -27,6 +27,7 @@ export const TX: Record<Lang, Dict> = {
     authRoleCoordinator: "Coordinateur",
     authRoleAdmin: "Administrateur",
     authRoleUnknown: "Format non reconnu",
+    authTagline: "Mapping Talent. Guiding Futures.",
 
     // Shell / nav
     navInfo: "Informations",
@@ -287,6 +288,7 @@ export const TX: Record<Lang, Dict> = {
     authRoleCoordinator: "منسق",
     authRoleAdmin: "إداري",
     authRoleUnknown: "صيغة غير معروفة",
+    authTagline: "Mapping Talent. Guiding Futures.",
 
     navInfo: "المعلومات",
     navIdea: "الفكرة",
@@ -531,6 +533,7 @@ export const TX: Record<Lang, Dict> = {
     authRoleCoordinator: "Coordinator",
     authRoleAdmin: "Administrator",
     authRoleUnknown: "Unrecognized format",
+    authTagline: "Mapping Talent. Guiding Futures.",
 
     navInfo: "Information",
     navIdea: "Idea",

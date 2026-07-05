@@ -189,18 +189,37 @@ export default function AuthGate({
 
       <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", alignItems: "center", width: "100%", maxWidth: 400 }}>
         <div style={{ display: "flex", flexDirection: "column", alignItems: "center", marginBottom: 24 }}>
-          <IdeaMapMark size={92} />
+          <IdeaMapMark size={100} />
           <div
             style={{
-              fontSize: 30,
+              fontSize: 34,
               fontWeight: 800,
               color: AUTH_COLORS.white,
-              marginTop: 16,
+              marginTop: 10,
               textTransform: "uppercase",
               letterSpacing: 0.5,
+              whiteSpace: "nowrap",
             }}
           >
             Idea<span style={{ color: "#2B5CFF" }}>Map</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12, width: 220 }}>
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
+            <div style={{ width: 5, height: 5, borderRadius: "50%", background: AUTH_COLORS.white }} />
+            <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
+          </div>
+          <div
+            style={{
+              fontSize: 11,
+              letterSpacing: 1.5,
+              color: AUTH_COLORS.white,
+              marginTop: 10,
+              fontWeight: 600,
+              whiteSpace: "nowrap",
+              textTransform: "uppercase",
+            }}
+          >
+            {tr("authTagline")}
           </div>
         </div>
 
