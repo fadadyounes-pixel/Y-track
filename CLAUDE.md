@@ -60,7 +60,7 @@ app/ideamap/
 
 ### The 9-step workflow (`app/ideamap/page.tsx`)
 
-`idea → dialogue → profile → plan → budget → compliance → documents → logo → export`
+`idea → dialogue → profile → plan → budget → logo → compliance → documents → export`
 
 AI calls are triggered by a `useEffect` keyed on `holder.step`, not by button clicks directly —
 buttons just advance `step`, and the effect fires the right AI call if the target data
@@ -80,10 +80,20 @@ keyed by document id) alongside its checked state — attaching a file auto-chec
 Files are read client-side via `fileToDataUrl()` and capped at `MAX_UPLOAD_BYTES`
 (1.5 MB) to protect the `localStorage` quota; nothing is sent to a server.
 
-At the `logo` step, a holder either uploads their own image or has Rafiq generate a
-`LogoConcept` (initials, two colors, one of `LOGO_ICONS`, a tagline) via a `json`-mode
-call, rendered client-side as an SVG badge by `renderLogoSvg()` — no image-generation
-model involved, so it's free and never blocked by an image API's rate limit.
+`logo` sits right after `budget`, not at the end — by then the plan and budget already
+exist, so a holder can pitch their project (with a real presentation, not just an idea)
+well before compliance is scored or documents are gathered. At this step, a holder
+either uploads their own image or has Rafiq generate a `LogoConcept` (initials, two
+colors, one of `LOGO_ICONS`, a tagline, informed by the profile *and* the plan/budget)
+via a `json`-mode call, rendered client-side as an SVG badge by `renderLogoSvg()` — no
+image-generation model involved, so it's free and never blocked by an image API's rate
+limit.
+
+`lib/pptx.ts` exports two deck builders sharing the same slide helpers:
+`buildPitchPptx()` (title + plan + budget — available at the `logo` step) and
+`buildJuryPptx()` (everything the pitch deck has, plus compliance and documents —
+available at `export`). Both dynamically `import("pptxgenjs")` so the library never
+ships in the main bundle or runs during SSR.
 
 ### Internationalization
 

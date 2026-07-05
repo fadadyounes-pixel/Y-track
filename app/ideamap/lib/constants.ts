@@ -82,15 +82,18 @@ export const REQUIRED_DOCUMENTS: DocDef[] = [
 export const emptyDocsState = (): DocumentsState =>
   Object.fromEntries(REQUIRED_DOCUMENTS.map((d) => [d.id, false]));
 
+// Logo comes right after plan + budget — by then there's enough substance
+// (the business model, the numbers) to inform a good logo and presentation,
+// and it still comes well before the paperwork-heavy documents step.
 export const STEP_ORDER = [
   "idea",
   "dialogue",
   "profile",
   "plan",
   "budget",
+  "logo",
   "compliance",
   "documents",
-  "logo",
   "export",
 ] as const;
 

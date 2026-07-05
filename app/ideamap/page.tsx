@@ -156,10 +156,14 @@ export default function IdeaMapPage() {
     }
   }
 
-  async function generateLogo(proj: ProjectProfile) {
+  async function generateLogo(proj: ProjectProfile, plan: BusinessPlan | null, budget: Budget | null) {
     setBusy(true);
     try {
-      const text = await ai([{ role: "user", content: JSON.stringify(proj) }], logoConceptSystemPrompt(lang), 300, "json");
+      // Plan + budget are already known by this point in the workflow, so the
+      // advisor grounds the logo concept in the real business model and
+      // numbers, not just the raw idea.
+      const context = { proj, plan, budget };
+      const text = await ai([{ role: "user", content: JSON.stringify(context) }], logoConceptSystemPrompt(lang), 300, "json");
       const concept = parseJSON<LogoConcept>(text);
       updateHolder({ logo: { source: "generated", concept } });
     } catch (err) {
@@ -202,9 +206,9 @@ export default function IdeaMapPage() {
     profile: "navProfile",
     plan: "navPlan",
     budget: "navBudget",
+    logo: "navLogo",
     compliance: "navCompliance",
     documents: "navDocuments",
-    logo: "navLogo",
     export: "navExport",
   };
 
@@ -251,7 +255,32 @@ export default function IdeaMapPage() {
       ))}
 
       {holder.step === "budget" && holder.budget && (
-        <StepBudget lang={lang} budget={holder.budget} onContinue={() => updateHolder({ step: "compliance" })} />
+        <StepBudget lang={lang} budget={holder.budget} onContinue={() => updateHolder({ step: "logo" })} />
+      )}
+
+      {holder.step === "logo" && (
+        <StepLogo
+          lang={lang}
+          logo={holder.logo}
+          proj={holder.proj}
+          plan={holder.plan}
+          budget={holder.budget}
+          holderLabel={holder.name || holder.cin}
+          busy={busy}
+          onGenerate={() => holder.proj && generateLogo(holder.proj, holder.plan, holder.budget)}
+          onUpload={async (file) => {
+            if (file.size > MAX_UPLOAD_BYTES) return t(lang, "documentsTooLarge");
+            try {
+              const dataUrl = await fileToDataUrl(file);
+              updateHolder({ logo: { source: "uploaded", imageDataUrl: dataUrl } });
+              return null;
+            } catch {
+              return t(lang, "documentsUploadError");
+            }
+          }}
+          onRemove={() => updateHolder({ logo: null })}
+          onContinue={() => updateHolder({ step: "compliance" })}
+        />
       )}
 
       {holder.step === "compliance" && (holder.comp ? (
@@ -287,27 +316,6 @@ export default function IdeaMapPage() {
             delete nextUploads[id];
             updateHolder({ uploads: nextUploads });
           }}
-          onContinue={() => updateHolder({ step: "logo" })}
-        />
-      )}
-
-      {holder.step === "logo" && (
-        <StepLogo
-          lang={lang}
-          logo={holder.logo}
-          busy={busy}
-          onGenerate={() => holder.proj && generateLogo(holder.proj)}
-          onUpload={async (file) => {
-            if (file.size > MAX_UPLOAD_BYTES) return t(lang, "documentsTooLarge");
-            try {
-              const dataUrl = await fileToDataUrl(file);
-              updateHolder({ logo: { source: "uploaded", imageDataUrl: dataUrl } });
-              return null;
-            } catch {
-              return t(lang, "documentsUploadError");
-            }
-          }}
-          onRemove={() => updateHolder({ logo: null })}
           onContinue={() => updateHolder({ step: "export" })}
         />
       )}

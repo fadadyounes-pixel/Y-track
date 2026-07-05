@@ -105,8 +105,8 @@ export const TX: Record<Lang, Dict> = {
     budgetGrandTotal: "Budget total",
     budgetContinue: "Évaluer la conformité",
 
-    // Step 6 — Compliance
-    complianceEyebrow: "Phase 6 · Conformité INDH",
+    // Step 7 — Compliance
+    complianceEyebrow: "Phase 7 · Conformité INDH",
     complianceTitle: "Rapport de conformité",
     complianceScore: "Score global",
     complianceEligible: "Éligible",
@@ -123,8 +123,8 @@ export const TX: Record<Lang, Dict> = {
     jury_sustainability: "Durabilité du projet",
     jury_innovation: "Innovation & originalité",
 
-    // Step 7 — Documents
-    documentsEyebrow: "Phase 7 · Pièces justificatives",
+    // Step 8 — Documents
+    documentsEyebrow: "Phase 8 · Pièces justificatives",
     documentsTitle: "Documents du dossier",
     documentsSubtitle: "Cochez les pièces déjà réunies. 8 documents sont obligatoires.",
     documentsRequired: "Obligatoire",
@@ -149,8 +149,8 @@ export const TX: Record<Lang, Dict> = {
     doc_rokhsa: "Autorisation Rokhsa.ma",
     doc_partnership: "Accord de partenariat",
 
-    // Step 8 — Logo
-    logoEyebrow: "Phase 8 · Identité visuelle",
+    // Step 6 — Logo
+    logoEyebrow: "Phase 6 · Identité visuelle",
     logoTitle: "Un logo pour votre projet",
     logoSubtitle: "Un logo aide le jury à identifier votre projet au premier coup d'œil sur votre présentation.",
     logoHaveOne: "Vous avez déjà un logo ?",
@@ -160,6 +160,9 @@ export const TX: Record<Lang, Dict> = {
     logoRegenerate: "Régénérer",
     logoReplace: "Remplacer",
     logoSkip: "Passer cette étape",
+    logoDownloadPitch: "Télécharger ma présentation (PPT)",
+    logoPitchPptTitle: "Présentation de projet",
+    logoPitchNote: "Votre plan d'affaires et votre budget sont déjà prêts : vous pouvez présenter votre projet dès maintenant, avant même de réunir les documents.",
 
     // Step 9 — Export
     exportEyebrow: "Phase 9 · Dossier final",
@@ -297,7 +300,7 @@ export const TX: Record<Lang, Dict> = {
     budgetGrandTotal: "الميزانية الإجمالية",
     budgetContinue: "تقييم المطابقة",
 
-    complianceEyebrow: "المرحلة 6 · مطابقة معايير المبادرة",
+    complianceEyebrow: "المرحلة 7 · مطابقة معايير المبادرة",
     complianceTitle: "تقرير المطابقة",
     complianceScore: "النتيجة الإجمالية",
     complianceEligible: "مؤهل",
@@ -314,7 +317,7 @@ export const TX: Record<Lang, Dict> = {
     jury_sustainability: "استدامة المشروع",
     jury_innovation: "الابتكار والأصالة",
 
-    documentsEyebrow: "المرحلة 7 · الوثائق الثبوتية",
+    documentsEyebrow: "المرحلة 8 · الوثائق الثبوتية",
     documentsTitle: "وثائق الملف",
     documentsSubtitle: "ضع علامة على الوثائق الجاهزة. 8 وثائق إلزامية.",
     documentsRequired: "إلزامي",
@@ -339,7 +342,7 @@ export const TX: Record<Lang, Dict> = {
     doc_rokhsa: "رخصة Rokhsa.ma",
     doc_partnership: "اتفاقية الشراكة",
 
-    logoEyebrow: "المرحلة 8 · الهوية البصرية",
+    logoEyebrow: "المرحلة 6 · الهوية البصرية",
     logoTitle: "شعار لمشروعك",
     logoSubtitle: "يساعد الشعار اللجنة على التعرف على مشروعك بسرعة في عرضك التقديمي.",
     logoHaveOne: "هل لديك شعار بالفعل؟",
@@ -349,6 +352,9 @@ export const TX: Record<Lang, Dict> = {
     logoRegenerate: "إعادة الإنشاء",
     logoReplace: "استبدال",
     logoSkip: "تخطي هذه الخطوة",
+    logoDownloadPitch: "تحميل عرضي التقديمي (PPT)",
+    logoPitchPptTitle: "عرض تقديمي للمشروع",
+    logoPitchNote: "خطة عملك وميزانيتك جاهزتان بالفعل: يمكنك تقديم مشروعك الآن، حتى قبل جمع الوثائق.",
 
     exportEyebrow: "المرحلة 9 · الملف النهائي",
     exportTitle: "ملفك جاهز",
@@ -483,7 +489,7 @@ export const TX: Record<Lang, Dict> = {
     budgetGrandTotal: "Total budget",
     budgetContinue: "Assess compliance",
 
-    complianceEyebrow: "Phase 6 · INDH Compliance",
+    complianceEyebrow: "Phase 7 · INDH Compliance",
     complianceTitle: "Compliance report",
     complianceScore: "Overall score",
     complianceEligible: "Eligible",
@@ -500,7 +506,7 @@ export const TX: Record<Lang, Dict> = {
     jury_sustainability: "Project sustainability",
     jury_innovation: "Innovation & originality",
 
-    documentsEyebrow: "Phase 7 · Supporting Documents",
+    documentsEyebrow: "Phase 8 · Supporting Documents",
     documentsTitle: "Dossier documents",
     documentsSubtitle: "Check off the documents you already have. 8 documents are required.",
     documentsRequired: "Required",
@@ -525,7 +531,7 @@ export const TX: Record<Lang, Dict> = {
     doc_rokhsa: "Rokhsa.ma authorization",
     doc_partnership: "Partnership agreement",
 
-    logoEyebrow: "Phase 8 · Visual Identity",
+    logoEyebrow: "Phase 6 · Visual Identity",
     logoTitle: "A logo for your project",
     logoSubtitle: "A logo helps the jury recognize your project at a glance on your presentation.",
     logoHaveOne: "Already have a logo?",
@@ -535,6 +541,9 @@ export const TX: Record<Lang, Dict> = {
     logoRegenerate: "Regenerate",
     logoReplace: "Replace",
     logoSkip: "Skip this step",
+    logoDownloadPitch: "Download my presentation (PPT)",
+    logoPitchPptTitle: "Project presentation",
+    logoPitchNote: "Your business plan and budget are already ready — you can pitch your project now, even before gathering the documents.",
 
     exportEyebrow: "Phase 9 · Final Dossier",
     exportTitle: "Your dossier is ready",

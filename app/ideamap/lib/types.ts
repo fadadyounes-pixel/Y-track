@@ -8,9 +8,9 @@ export type StepId =
   | "profile"
   | "plan"
   | "budget"
+  | "logo"
   | "compliance"
   | "documents"
-  | "logo"
   | "export";
 
 export interface ChatMessage {

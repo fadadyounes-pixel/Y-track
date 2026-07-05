@@ -4,8 +4,17 @@ import { useState } from "react";
 import { COLORS } from "../lib/constants";
 import { t } from "../lib/i18n";
 import { renderLogoSvg } from "../lib/logo";
-import { Lang, LogoState } from "../lib/types";
+import { Budget, BusinessPlan, Lang, LogoState, ProjectProfile } from "../lib/types";
 import * as ui from "../lib/ui";
+
+function downloadBlob(filename: string, blob: Blob) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
 function LogoPreview({ logo, size = 120 }: { logo: LogoState; size?: number }) {
   if (logo.source === "uploaded" && logo.imageDataUrl) {
@@ -33,6 +42,10 @@ function LogoPreview({ logo, size = 120 }: { logo: LogoState; size?: number }) {
 export default function StepLogo({
   lang,
   logo,
+  proj,
+  plan,
+  budget,
+  holderLabel,
   busy,
   onGenerate,
   onUpload,
@@ -41,6 +54,10 @@ export default function StepLogo({
 }: {
   lang: Lang;
   logo: LogoState | null;
+  proj: ProjectProfile | null;
+  plan: BusinessPlan | null;
+  budget: Budget | null;
+  holderLabel: string;
   busy: boolean;
   onGenerate: () => void;
   onUpload: (file: File) => Promise<string | null>;
@@ -50,6 +67,7 @@ export default function StepLogo({
   const tr = (k: string) => t(lang, k);
   const [error, setError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [buildingPitch, setBuildingPitch] = useState(false);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -58,6 +76,22 @@ export default function StepLogo({
     setUploading(true);
     setError(await onUpload(file));
     setUploading(false);
+  }
+
+  async function handlePitchPptx() {
+    if (!proj || !plan || !budget) return;
+    setBuildingPitch(true);
+    setError(null);
+    try {
+      const { buildPitchPptx } = await import("../lib/pptx");
+      const blob = await buildPitchPptx({ proj, plan, budget, logo, holderLabel }, lang);
+      downloadBlob(`${proj.projectName || "projet"}-presentation.pptx`, blob);
+    } catch (err) {
+      console.error(err);
+      setError(tr("exportPptError"));
+    } finally {
+      setBuildingPitch(false);
+    }
   }
 
   return (
@@ -126,6 +160,17 @@ export default function StepLogo({
         <input id="logo-upload" type="file" accept="image/*" onChange={handleFile} style={{ display: "none" }} />
         {error && <p style={{ fontSize: 12.5, color: COLORS.red, marginTop: 14 }}>{error}</p>}
       </div>
+
+      {plan && budget && (
+        <div style={{ ...ui.card, marginTop: 16, display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <p style={{ fontSize: 13.5, color: COLORS.onSurface, margin: 0 }}>{tr("logoPitchNote")}</p>
+          </div>
+          <button onClick={handlePitchPptx} disabled={buildingPitch} style={{ ...ui.btnSecondary, ...(buildingPitch ? ui.disabled : {}) }}>
+            🎯 {buildingPitch ? tr("loading") : tr("logoDownloadPitch")}
+          </button>
+        </div>
+      )}
 
       <div style={{ marginTop: 24, display: "flex", justifyContent: "flex-end", gap: 12 }}>
         {!logo && (

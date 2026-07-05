@@ -11,9 +11,9 @@ const STEP_ICON: Record<StepId, string> = {
   profile: "🪪",
   plan: "🗺️",
   budget: "💰",
+  logo: "🎨",
   compliance: "🛡️",
   documents: "📎",
-  logo: "🎨",
   export: "📤",
 };
 
@@ -23,9 +23,9 @@ const STEP_NAV_KEY: Record<StepId, string> = {
   profile: "navProfile",
   plan: "navPlan",
   budget: "navBudget",
+  logo: "navLogo",
   compliance: "navCompliance",
   documents: "navDocuments",
-  logo: "navLogo",
   export: "navExport",
 };
 

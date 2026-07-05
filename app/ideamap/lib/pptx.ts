@@ -1,33 +1,22 @@
 import type PptxGenJSType from "pptxgenjs";
-import { COLORS } from "./constants";
-import { JURY_GRID } from "./constants";
+import { COLORS, JURY_GRID } from "./constants";
 import { getLogoPngDataUrl } from "./logo";
 import { pillarLabel, t } from "./i18n";
 import { formatMAD } from "./utils";
-import { HolderState, Lang } from "./types";
+import { Budget, BusinessPlan, HolderState, Lang, LogoState, ProjectProfile } from "./types";
 
 const ACCENT = COLORS.primaryDark.replace("#", "");
 const INK = "1A1C1E";
 const MUTED = "6C7A76";
 
-/** Builds the jury-ready presentation as a real .pptx Blob. Loaded dynamically
- * so pptxgenjs (a fairly large client-only library) never ships in the main
- * bundle or gets evaluated during server rendering. */
-export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blob> {
-  const { proj, plan, budget, comp, docs, logo } = state;
-  if (!proj || !plan || !budget || !comp) throw new Error("Missing project data for the presentation");
-
-  const rtl = lang === "ar";
-  const align: "left" | "right" = rtl ? "right" : "left";
-  const tr = (k: string) => t(lang, k);
-
+/** Loads pptxgenjs dynamically (client-only, fairly large) and sets up the
+ * shared deck layout + a slide header helper both builders below reuse. */
+async function createDeck(align: "left" | "right") {
   const PptxGenJSModule = await import("pptxgenjs");
   const PptxGenJS = PptxGenJSModule.default;
   const pptx = new PptxGenJS();
   pptx.defineLayout({ name: "IDEAMAP", width: 10, height: 5.63 });
   pptx.layout = "IDEAMAP";
-
-  const logoPng = await getLogoPngDataUrl(logo, 400).catch(() => null);
 
   function header(slide: PptxGenJSType.Slide, title: string) {
     slide.addShape(pptx.ShapeType.rect, { x: 0, y: 0, w: 10, h: 0.75, fill: { color: ACCENT } });
@@ -45,13 +34,18 @@ export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blo
     });
   }
 
-  // --- Slide 1: Title ---
+  return { pptx, header };
+}
+
+async function addTitleSlide(
+  pptx: PptxGenJSType,
+  opts: { logo: LogoState | null; projectName: string; subtitle: string; footerTitle: string; holderLine: string }
+) {
+  const logoPng = await getLogoPngDataUrl(opts.logo, 400).catch(() => null);
   const s1 = pptx.addSlide();
   s1.background = { color: "FFFFFF" };
-  if (logoPng) {
-    s1.addImage({ data: logoPng, x: 4.25, y: 0.5, w: 1.5, h: 1.5 });
-  }
-  s1.addText(proj.projectName, {
+  if (logoPng) s1.addImage({ data: logoPng, x: 4.25, y: 0.5, w: 1.5, h: 1.5 });
+  s1.addText(opts.projectName, {
     x: 0.5,
     y: 2.2,
     w: 9,
@@ -62,11 +56,8 @@ export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blo
     align: "center",
     fontFace: "Georgia",
   });
-  s1.addText(
-    logo?.concept?.tagline || `${proj.sector} · ${pillarLabel(lang, proj.pillar)}`,
-    { x: 0.5, y: 3.05, w: 9, h: 0.5, fontSize: 16, italic: true, color: MUTED, align: "center" }
-  );
-  s1.addText(tr("exportJuryPptTitle"), {
+  s1.addText(opts.subtitle, { x: 0.5, y: 3.05, w: 9, h: 0.5, fontSize: 16, italic: true, color: MUTED, align: "center" });
+  s1.addText(opts.footerTitle, {
     x: 0.5,
     y: 4.6,
     w: 9,
@@ -76,38 +67,33 @@ export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blo
     align: "center",
     fontFace: "Courier New",
   });
-  s1.addText(`${state.name || state.cin} — ${new Date().toLocaleDateString(lang === "ar" ? "ar-MA" : lang)}`, {
-    x: 0.5,
-    y: 5.0,
-    w: 9,
-    h: 0.4,
-    fontSize: 11,
-    color: MUTED,
-    align: "center",
-  });
+  s1.addText(opts.holderLine, { x: 0.5, y: 5.0, w: 9, h: 0.4, fontSize: 11, color: MUTED, align: "center" });
+}
 
-  // --- Slide 2: Résumé & Problématique ---
+function addPlanSlides(pptx: PptxGenJSType, header: (s: PptxGenJSType.Slide, t: string) => void, plan: BusinessPlan, lang: Lang, align: "left" | "right") {
+  const tr = (k: string) => t(lang, k);
+
   const s2 = pptx.addSlide();
   header(s2, tr("planSummary"));
   s2.addText(plan.executiveSummary, { x: 0.4, y: 1.0, w: 9.2, h: 1.9, fontSize: 14, color: INK, align });
   s2.addText(tr("planProblem"), { x: 0.4, y: 3.0, w: 9.2, h: 0.4, fontSize: 15, bold: true, color: ACCENT, align });
   s2.addText(plan.problemStatement, { x: 0.4, y: 3.45, w: 9.2, h: 1.8, fontSize: 14, color: INK, align });
 
-  // --- Slide 3: Solution & Modèle économique ---
   const s3 = pptx.addSlide();
   header(s3, tr("planSolution"));
   s3.addText(plan.solution, { x: 0.4, y: 1.0, w: 9.2, h: 1.9, fontSize: 14, color: INK, align });
   s3.addText(tr("planModel"), { x: 0.4, y: 3.0, w: 9.2, h: 0.4, fontSize: 15, bold: true, color: ACCENT, align });
   s3.addText(plan.businessModel, { x: 0.4, y: 3.45, w: 9.2, h: 1.8, fontSize: 14, color: INK, align });
 
-  // --- Slide 4: Impact & Alignement INDH ---
   const s4 = pptx.addSlide();
   header(s4, tr("planImpact"));
   s4.addText(plan.socialImpact, { x: 0.4, y: 1.0, w: 9.2, h: 1.9, fontSize: 14, color: INK, align });
   s4.addText(tr("planAlignment"), { x: 0.4, y: 3.0, w: 9.2, h: 0.4, fontSize: 15, bold: true, color: ACCENT, align });
   s4.addText(plan.indh_alignment, { x: 0.4, y: 3.45, w: 9.2, h: 1.8, fontSize: 14, color: INK, align });
+}
 
-  // --- Slide 5: Budget ---
+function addBudgetSlide(pptx: PptxGenJSType, header: (s: PptxGenJSType.Slide, t: string) => void, budget: Budget, lang: Lang) {
+  const tr = (k: string) => t(lang, k);
   const s5 = pptx.addSlide();
   header(s5, tr("budgetTitle"));
   const budgetRows = [
@@ -131,8 +117,61 @@ export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blo
     )}    ·    ${tr("budgetGrandTotal")}: ${formatMAD(total)}`,
     { x: 0.4, y: 1.0 + 0.35 * (budgetRows.length + 1), w: 9.2, h: 0.5, fontSize: 12, bold: true, color: INK, align: "center" }
   );
+}
 
-  // --- Slide 6: Conformité ---
+export interface PitchInput {
+  proj: ProjectProfile;
+  plan: BusinessPlan;
+  budget: Budget;
+  logo: LogoState | null;
+  holderLabel: string;
+}
+
+/** The early pitch deck — available as soon as plan + budget exist (i.e. at
+ * the Logo step), well before compliance is scored or documents are
+ * gathered. A holder can use this to pitch their project informally before
+ * doing any of the paperwork. */
+export async function buildPitchPptx(input: PitchInput, lang: Lang): Promise<Blob> {
+  const { proj, plan, budget, logo, holderLabel } = input;
+
+  const align: "left" | "right" = lang === "ar" ? "right" : "left";
+  const tr = (k: string) => t(lang, k);
+  const { pptx, header } = await createDeck(align);
+
+  await addTitleSlide(pptx, {
+    logo,
+    projectName: proj.projectName,
+    subtitle: logo?.concept?.tagline || `${proj.sector} · ${pillarLabel(lang, proj.pillar)}`,
+    footerTitle: tr("logoPitchPptTitle"),
+    holderLine: `${holderLabel} — ${new Date().toLocaleDateString(lang === "ar" ? "ar-MA" : lang)}`,
+  });
+  addPlanSlides(pptx, header, plan, lang, align);
+  addBudgetSlide(pptx, header, budget, lang);
+
+  return (await pptx.write({ outputType: "blob" })) as Blob;
+}
+
+/** Builds the full jury-ready presentation as a real .pptx Blob — everything
+ * the pitch deck has, plus compliance and the document/submission status. */
+export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blob> {
+  const { proj, plan, budget, comp, docs, logo } = state;
+  if (!proj || !plan || !budget || !comp) throw new Error("Missing project data for the presentation");
+
+  const align: "left" | "right" = lang === "ar" ? "right" : "left";
+  const tr = (k: string) => t(lang, k);
+  const { pptx, header } = await createDeck(align);
+
+  await addTitleSlide(pptx, {
+    logo,
+    projectName: proj.projectName,
+    subtitle: logo?.concept?.tagline || `${proj.sector} · ${pillarLabel(lang, proj.pillar)}`,
+    footerTitle: tr("exportJuryPptTitle"),
+    holderLine: `${state.name || state.cin} — ${new Date().toLocaleDateString(lang === "ar" ? "ar-MA" : lang)}`,
+  });
+  addPlanSlides(pptx, header, plan, lang, align);
+  addBudgetSlide(pptx, header, budget, lang);
+
+  // --- Compliance ---
   const s6 = pptx.addSlide();
   header(s6, tr("complianceTitle"));
   s6.addText(`${comp.score} / 100`, { x: 0.4, y: 1.0, w: 2.5, h: 1, fontSize: 40, bold: true, color: ACCENT, align: "center" });
@@ -157,7 +196,7 @@ export async function buildJuryPptx(state: HolderState, lang: Lang): Promise<Blo
   s6.addText(tr("complianceRecommendations"), { x: 0.4, y: 3.1, w: 9.2, h: 0.35, fontSize: 13, bold: true, color: ACCENT, align });
   s6.addText(comp.recommendations.map((r) => `• ${r}`).join("\n"), { x: 0.4, y: 3.5, w: 9.2, h: 1.6, fontSize: 12, color: INK, align });
 
-  // --- Slide 7: Documents & prochaines étapes ---
+  // --- Documents & next steps ---
   const s7 = pptx.addSlide();
   header(s7, tr("documentsTitle"));
   const docEntries = Object.entries(docs);

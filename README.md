@@ -28,11 +28,13 @@ funding application — and turns weeks of guesswork into a structured, self-che
 
 1. The user describes their idea in plain language
 2. An advisor asks 4 targeted questions, then structures the project into JSON
-3. IdeaMap generates a full **Business Plan**, **Budget**, and **Compliance Report**
-4. The user checks off required **Documents** and can attach the actual files
-5. The user gets a **Logo** for their project — upload their own, or have the advisor
-   generate a monogram concept for free
-6. A final **Dossier** screen shows overall readiness and lets the user download every
+3. IdeaMap generates a full **Business Plan** and **Budget**
+4. The user gets a **Logo** — upload their own, or have the advisor generate a
+   monogram concept for free — and can already download a presentation deck to
+   pitch the project, before any paperwork exists
+5. IdeaMap scores a full **Compliance Report** against the real jury grid
+6. The user checks off required **Documents** and can attach the actual files
+7. A final **Dossier** screen shows overall readiness and lets the user download every
    generated document, including a ready-to-present **jury slide deck**
 
 Coordinators and admins get dashboards to track holders and manage the platform.
@@ -87,18 +89,23 @@ IdeaMap orients every project toward the axis it best serves:
 | **Coordinator** | `@NAMECOD`, created by an Admin | Dashboard of all holders + progress |
 | **Admin** | `@adminINDH` | Platform stats, project list, coordinator management |
 
-## Documents & logo
+## Logo & documents
 
-At the Documents step, a holder can attach the actual file for each required or
-optional document (image or PDF, 1.5 MB max) — attaching one auto-checks it.
+The Logo step comes right after Budget, not at the end — in practice a holder pitches
+their project informally (with a logo and a simple deck) well before assembling the
+formal paperwork, and by this point the plan and budget already give the advisor
+something real to work from. A holder either uploads their own logo image, or has the
+advisor generate one for free: a short Rafiq call returns a monogram concept (initials,
+two colors, an icon suited to the project's sector, a tagline), which is rendered
+client-side as an SVG badge — no image-generation API involved, so it costs nothing and
+never fails due to image-model rate limits. Right there, the holder can also download a
+**presentation deck** (title + plan + budget) to pitch the project — this step is
+otherwise skippable.
+
+At the Documents step (after Compliance), a holder can attach the actual file for each
+required or optional document (image or PDF, 1.5 MB max) — attaching one auto-checks it.
 Files are stored as data URLs in the holder's own `localStorage` record; nothing is
 uploaded to a server (see [Known gaps](#feature-backlog)).
-
-At the Logo step, a holder either uploads their own logo image, or has the advisor
-generate one for free: a short Rafiq call returns a monogram concept (initials, two
-colors, an icon suited to the project's sector, a tagline), which is rendered
-client-side as an SVG badge — no image-generation API involved, so it costs nothing
-and never fails due to image-model rate limits. This step is skippable.
 
 ## Dossier deliverables
 
@@ -109,14 +116,15 @@ At the Export step, a holder can download:
 - Compliance report (score, jury grid, recommendations)
 - Document checklist (required vs. optional, with checkmarks)
 - Submission guide (the 6 steps to file with the DAS/CPDH, useful contacts)
-- **A real jury presentation (.pptx)** — a 7-slide deck (title with logo, plan,
+- **A real final jury presentation (.pptx)** — a 7-slide deck (title with logo, plan,
   budget table, compliance score and jury grid, next steps), built client-side with
-  `pptxgenjs` and ready to present to the CPDH
+  `pptxgenjs` and ready to present to the CPDH. This is the more complete sibling of
+  the 5-slide pitch deck already downloadable back at the Logo step.
 - Everything else combined into one text dossier
 
 The business plan, budget, compliance report, checklist, and guide currently download
-as plain text — the jury presentation is the one deliverable that's a real,
-formatted file today. See the backlog below for real PDF/XLS formats on the rest.
+as plain text — the presentation decks are the one deliverable that are real,
+formatted files today. See the backlog below for real PDF/XLS formats on the rest.
 
 ## How to run
 
