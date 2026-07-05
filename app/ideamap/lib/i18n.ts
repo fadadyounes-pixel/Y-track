@@ -5,7 +5,7 @@ type Dict = Record<string, string>;
 export const TX: Record<Lang, Dict> = {
   fr: {
     appName: "IdeaMap",
-    tagline: "Assistant IA pour vos projets INDH",
+    tagline: "Votre conseiller pour vos projets INDH",
     langName: "Français",
 
     // Auth
@@ -37,7 +37,7 @@ export const TX: Record<Lang, Dict> = {
     logout: "Déconnexion",
     next: "Suivant",
     back: "Retour",
-    loading: "L'assistant réfléchit…",
+    loading: "Le conseiller réfléchit…",
 
     // Step 1 — Idea
     ideaEyebrow: "Phase 1 · Validation du concept",
@@ -53,9 +53,9 @@ export const TX: Record<Lang, Dict> = {
     ideaEncrypted: "Chiffrement des données de niveau entreprise actif.",
 
     // Step 2 — Dialogue
-    dialogueEyebrow: "Phase 2 · Dialogue avec l'IA",
+    dialogueEyebrow: "Phase 2 · Dialogue avec le conseiller",
     dialogueTitle: "Précisons votre projet ensemble",
-    dialogueSubtitle: "Répondez aux 5 questions de l'assistant pour structurer votre dossier.",
+    dialogueSubtitle: "Répondez aux 5 questions du conseiller pour structurer votre dossier.",
     dialoguePlaceholder: "Votre réponse…",
     dialogueSend: "Envoyer",
     dialogueProgress: "Question",
@@ -184,7 +184,7 @@ export const TX: Record<Lang, Dict> = {
 
   ar: {
     appName: "IdeaMap",
-    tagline: "مساعد ذكي لمشاريعك في إطار المبادرة الوطنية للتنمية البشرية",
+    tagline: "مستشارك لمشاريعك في إطار المبادرة الوطنية للتنمية البشرية",
     langName: "العربية",
 
     authTitle: "مرحباً بك",
@@ -214,7 +214,7 @@ export const TX: Record<Lang, Dict> = {
     logout: "تسجيل الخروج",
     next: "التالي",
     back: "رجوع",
-    loading: "المساعد يفكر…",
+    loading: "المستشار يفكر…",
 
     ideaEyebrow: "المرحلة 1 · التحقق من الفكرة",
     ideaTitle: "كل تغيير كبير يبدأ بفكرة.",
@@ -226,9 +226,9 @@ export const TX: Record<Lang, Dict> = {
     ideaSubmit: "بدء التحليل",
     ideaEncrypted: "تشفير البيانات على مستوى المؤسسات مُفعّل.",
 
-    dialogueEyebrow: "المرحلة 2 · الحوار مع المساعد الذكي",
+    dialogueEyebrow: "المرحلة 2 · الحوار مع المستشار",
     dialogueTitle: "لنُدقق في مشروعك معاً",
-    dialogueSubtitle: "أجب عن أسئلة المساعد الخمسة لهيكلة ملفك.",
+    dialogueSubtitle: "أجب عن أسئلة المستشار الخمسة لهيكلة ملفك.",
     dialoguePlaceholder: "إجابتك…",
     dialogueSend: "إرسال",
     dialogueProgress: "سؤال",
@@ -348,7 +348,7 @@ export const TX: Record<Lang, Dict> = {
 
   en: {
     appName: "IdeaMap",
-    tagline: "AI-powered assistant for your INDH projects",
+    tagline: "Your advisor for your INDH projects",
     langName: "English",
 
     authTitle: "Welcome",
@@ -378,7 +378,7 @@ export const TX: Record<Lang, Dict> = {
     logout: "Log out",
     next: "Next",
     back: "Back",
-    loading: "The assistant is thinking…",
+    loading: "The advisor is thinking…",
 
     ideaEyebrow: "Phase 1 · Concept Validation",
     ideaTitle: "Every great change starts with an idea.",
@@ -391,9 +391,9 @@ export const TX: Record<Lang, Dict> = {
     ideaSubmit: "Begin analysis",
     ideaEncrypted: "Enterprise-grade data encryption active.",
 
-    dialogueEyebrow: "Phase 2 · AI Dialogue",
+    dialogueEyebrow: "Phase 2 · Dialogue with your advisor",
     dialogueTitle: "Let's refine your project together",
-    dialogueSubtitle: "Answer the assistant's 5 questions to structure your file.",
+    dialogueSubtitle: "Answer the advisor's 5 questions to structure your file.",
     dialoguePlaceholder: "Your answer…",
     dialogueSend: "Send",
     dialogueProgress: "Question",

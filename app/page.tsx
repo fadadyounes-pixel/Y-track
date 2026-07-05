@@ -215,10 +215,10 @@ export default function LandingPage() {
             Module IdeaMap
           </div>
           <h2 style={{ fontSize: 30, fontWeight: 800, color: colors.dark, margin: "0 0 12px" }}>
-            De l&apos;idée au dossier INDH, en 8 étapes guidées par l&apos;IA
+            De l&apos;idée au dossier INDH, en 8 étapes guidées par votre conseiller
           </h2>
           <p style={{ color: "#475569", maxWidth: 620, margin: "0 auto" }}>
-            IdeaMap accompagne chaque porteur de projet : idée, dialogue avec l&apos;assistant IA,
+            IdeaMap accompagne chaque porteur de projet : idée, dialogue avec son conseiller,
             plan d&apos;affaires, budget, conformité INDH, documents et export du dossier final.
           </p>
         </div>
@@ -232,7 +232,7 @@ export default function LandingPage() {
         >
           {[
             ["💡", "Idée", "Décrivez votre projet en langage simple."],
-            ["💬", "Dialogue IA", "5 questions ciblées pour structurer le projet."],
+            ["💬", "Conseiller", "5 questions ciblées pour structurer le projet."],
             ["📄", "Plan & Budget", "Business plan et budget générés automatiquement."],
             ["✅", "Conformité", "Score et recommandations selon les critères INDH."],
             ["📎", "Documents", "Liste des pièces justificatives à fournir."],
