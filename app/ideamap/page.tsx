@@ -84,7 +84,7 @@ export default function IdeaMapPage() {
       const text = await ai(
         buildDialogueMessages(idea, msgsSoFar),
         dialogueSystemPrompt(lang, idea, callNumber),
-        1200,
+        callNumber < 5 ? 200 : 1200,
         callNumber < 5 ? "chat" : "json"
       );
       if (callNumber < 5) {
@@ -106,14 +106,14 @@ export default function IdeaMapPage() {
       const planText = await ai(
         [{ role: "user", content: JSON.stringify(proj) }],
         businessPlanSystemPrompt(lang),
-        1200,
+        2200,
         "json"
       );
       const plan = parseJSON<BusinessPlan>(planText);
       const budgetText = await ai(
         [{ role: "user", content: JSON.stringify(proj) }],
         budgetSystemPrompt(lang),
-        1200,
+        1500,
         "json"
       );
       const budget = parseJSON<Budget>(budgetText);
@@ -131,7 +131,7 @@ export default function IdeaMapPage() {
       const text = await ai(
         [{ role: "user", content: JSON.stringify({ proj, plan, budget }) }],
         complianceSystemPrompt(lang),
-        1200,
+        1500,
         "json"
       );
       const comp = parseJSON<ComplianceReport>(text);

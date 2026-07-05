@@ -21,7 +21,7 @@ to a full business plan, budget, compliance report and document checklist.
 | Framework | Next.js 16 (App Router) |
 | Language | TypeScript |
 | Styling | Inline React styles (no Tailwind/CSS modules) — see `app/ideamap/lib/ui.ts` for shared style snippets and `app/ideamap/lib/constants.ts` for design tokens (`COLORS`, `RADIUS`) |
-| AI engine | "Rafiq" (`app/api/ai/providers.ts`) — routes each call to Claude / Gemini / Groq by task, with automatic fallback. See its header comment for the routing rules |
+| AI engine | "Rafiq" (`app/api/ai/providers.ts`) — routes each call to Gemini / Groq / OpenRouter by task, with automatic fallback. All three are free tiers; there is no paid AI provider in this codebase. See its header comment for the routing rules |
 | Fonts | Poppins (Latin) · Tajawal (Arabic), loaded via Google Fonts in `app/layout.tsx` |
 | Analytics | `@vercel/analytics` |
 | Persistence | Browser `localStorage` (`app/ideamap/lib/storage.ts`) — no backend yet, see Feature Backlog |
@@ -41,7 +41,7 @@ app/ideamap/
     ├── types.ts       # HolderState, ProjectProfile, BusinessPlan, Budget, ComplianceReport…
     ├── constants.ts   # design tokens, INDH domain facts (sectors, pillars, jury grid, documents)
     ├── i18n.ts        # TX dictionary (fr/ar/en) + t(), pillarLabel(), dir(), fontFamily()
-    ├── ai.ts          # client ai() fetch helper (chat|json mode) + system-prompt builders + parseJSON()
+    ├── ai.ts          # client ai() fetch helper (chat|json mode) + system-prompt builders (all grounded via indhContext()) + parseJSON()
     ├── ui.ts          # shared inline-style objects (card, btnPrimary, input, …)
     ├── storage.ts     # localStorage-backed holder/coordinator persistence
     └── utils.ts       # readinessPercent(), stepProgressPercent(), formatMAD()
@@ -89,9 +89,9 @@ to switch to Tajawal for Arabic.
 
 | Variable | Required | Description |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | At least one of these three | Rafiq's first choice when set |
-| `GEMINI_API_KEY` | At least one of these three | Free tier — Rafiq's pick for JSON steps |
-| `GROQ_API_KEY` | At least one of these three | Free tier — Rafiq's pick for dialogue questions |
+| `GEMINI_API_KEY` | At least one of these three | Free tier — Rafiq's first choice for JSON steps |
+| `GROQ_API_KEY` | At least one of these three | Free tier — Rafiq's first choice for dialogue questions |
+| `OPENROUTER_API_KEY` | At least one of these three | Free tier — third fallback for either step type |
 
 ## Known gaps / backlog
 

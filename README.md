@@ -37,19 +37,28 @@ Coordinators and admins get dashboards to track holders and manage the platform.
 
 ## Rafiq — the AI engine
 
-Every AI call in IdeaMap goes through **Rafiq** ("companion" / "guide" in Arabic), a
-small router in `app/api/ai/providers.ts` rather than a single hardcoded model. Rafiq
-sends each call to whichever configured provider suits the task, and falls back to the
-next one automatically if a provider is unavailable or rate-limited:
+IdeaMap is a free tool for Moroccan youth and project holders, so every AI call goes
+through **Rafiq** ("companion" / "guide" in Arabic), a small router in
+`app/api/ai/providers.ts` that only ever talks to **free, no-card-required
+providers** — there is no paid AI provider anywhere in this codebase. Rafiq tries
+each task's preferred provider first and falls back automatically if one is
+unconfigured, rate-limited, or fails, so a single provider's daily quota never
+blocks a holder mid-dossier:
 
-| Task | Preferred provider | Why |
+| Task | Try order | Why |
 |---|---|---|
-| Structured JSON (profile, plan, budget, compliance) | Gemini | Native structured-output mode |
-| Short dialogue questions | Groq | Fast, free, no structure needed |
-| Either, when configured | Claude | Best quality we've measured |
+| Structured JSON (profile, plan, budget, compliance) | Gemini → OpenRouter → Groq | Gemini has a native structured-output mode |
+| Short dialogue questions | Groq → Gemini → OpenRouter | Groq is fast and free |
 
-You only need one provider's API key to run IdeaMap. Configuring more than one just
-gives Rafiq somewhere to fall back to. See [Environment Variables](#environment-variables).
+Gemini and Groq both have genuinely free tiers generous enough to run IdeaMap
+indefinitely at low-to-moderate volume; OpenRouter adds a third free model as extra
+headroom. You only need **one** free key to run IdeaMap; configuring more just gives
+Rafiq somewhere else to fall back to. See [Environment Variables](#environment-variables).
+
+Every system prompt also carries the same INDH Phase 3 grounding — the real axis
+names, sectors, jury weights, and document list — so whichever provider answers a
+given call, the answer is anchored to the actual program, not to what a general-purpose
+model happens to already know about Morocco.
 
 ## Impact
 
@@ -95,8 +104,8 @@ formats.
 ### Prerequisites
 
 - Node.js 18+
-- At least one AI provider API key (Gemini and Groq both have free tiers — see
-  [Environment Variables](#environment-variables))
+- At least one **free** AI provider API key — Gemini and Groq both offer genuinely
+  free, no-card-required tiers (see [Environment Variables](#environment-variables))
 
 ### Setup
 
@@ -129,12 +138,12 @@ npm start
 
 | Variable | Required | Description |
 |---|---|---|
-| `ANTHROPIC_API_KEY` | At least one of these three | Claude — Rafiq's first choice when set |
-| `GEMINI_API_KEY` | At least one of these three | Google Gemini (free tier) — Rafiq's pick for structured JSON steps |
-| `GROQ_API_KEY` | At least one of these three | Groq (free tier) — Rafiq's pick for the dialogue questions |
-| `CLAUDE_MODEL` | No | Overrides the default `claude-sonnet-5` |
+| `GEMINI_API_KEY` | At least one of these three | Free — Rafiq's first choice for JSON steps |
+| `GROQ_API_KEY` | At least one of these three | Free — Rafiq's first choice for dialogue questions |
+| `OPENROUTER_API_KEY` | At least one of these three | Free — extra fallback headroom for either step type |
 | `GEMINI_MODEL` | No | Overrides the default `gemini-2.5-flash` |
 | `GROQ_MODEL` | No | Overrides the default `llama-3.3-70b-versatile` |
+| `OPENROUTER_MODEL` | No | Overrides the default `qwen/qwen3-235b-a22b:free` |
 
 ## Feature backlog
 
