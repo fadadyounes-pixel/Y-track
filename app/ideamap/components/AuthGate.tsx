@@ -13,9 +13,10 @@ export interface AuthResult {
   coordCode?: string;
 }
 
-// Navy / white / blue theme for the auth screen only — built around the
-// IdeaMap brain+pin mark. Blue is reserved for the logo artwork itself; the
-// rest of the page chrome stays strictly navy/white (plus the error color).
+// Navy / white / blue / gold theme for the auth screen only — built around
+// the IdeaMap brain+pin mark and its brand lockup (wordmark, divider dot,
+// tagline). The rest of the page chrome stays strictly navy/white (plus the
+// error color).
 const AUTH_COLORS = {
   navy: "#0A0F2C",
   navySecondary: "#141B45",
@@ -25,6 +26,7 @@ const AUTH_COLORS = {
   inputFill: "#F5F6F8",
   inputBorder: "#DDE0E8",
   error: "#C0632F",
+  gold: "#E8B84B",
 };
 
 type LiveRole = "holder" | "coordinator" | "admin" | "unknown" | "empty";
@@ -201,11 +203,11 @@ export default function AuthGate({
               whiteSpace: "nowrap",
             }}
           >
-            Idea<span style={{ color: "#2B5CFF" }}>Map</span>
+            Idea <span style={{ color: "#2B5CFF" }}>Map</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 12, width: 220 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 14, width: 240 }}>
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
-            <div style={{ width: 5, height: 5, borderRadius: "50%", background: AUTH_COLORS.white }} />
+            <div style={{ width: 6, height: 6, borderRadius: "50%", background: AUTH_COLORS.gold }} />
             <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,0.35)" }} />
           </div>
           <div
@@ -213,13 +215,14 @@ export default function AuthGate({
               fontSize: 11,
               letterSpacing: 1.5,
               color: AUTH_COLORS.white,
-              marginTop: 10,
-              fontWeight: 600,
+              marginTop: 12,
+              fontWeight: 700,
               whiteSpace: "nowrap",
               textTransform: "uppercase",
             }}
           >
-            {tr("authTagline")}
+            Mapping <span style={{ color: AUTH_COLORS.gold }}>Talent</span>. Guiding{" "}
+            <span style={{ color: AUTH_COLORS.gold }}>Futures</span>.
           </div>
         </div>
 
