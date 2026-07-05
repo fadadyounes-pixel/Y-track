@@ -181,7 +181,6 @@ npm start
 - Empty states polish for Coordinator / Admin dashboards
 
 ### Medium priority
-- Toast notifications when AI calls fail
 - Coordinator ↔ holder assignment (today coordinators see *all* holders)
 - Email notifications when a holder completes their dossier
 - Official INDH API connection

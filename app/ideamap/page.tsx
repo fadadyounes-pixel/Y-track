@@ -40,6 +40,7 @@ import { loadHolder, newHolderState, saveHolder } from "./lib/storage";
 import { fileToDataUrl } from "./lib/utils";
 import { COLORS } from "./lib/constants";
 import StepLogo from "./components/StepLogo";
+import * as ui from "./lib/ui";
 
 function LoadingCard({ lang }: { lang: Lang }) {
   return (
@@ -64,8 +65,10 @@ export default function IdeaMapPage() {
   const [auth, setAuth] = useState<AuthResult | null>(null);
   const [holder, setHolder] = useState<HolderState | null>(null);
   const [busy, setBusy] = useState(false);
+  const [aiError, setAiError] = useState<string | null>(null);
 
   function updateHolder(patch: Partial<HolderState>) {
+    if (patch.step) setAiError(null);
     setHolder((prev) => {
       if (!prev) return prev;
       const next = { ...prev, ...patch };
@@ -94,6 +97,7 @@ export default function IdeaMapPage() {
 
   async function runDialogueCall(idea: string, msgsSoFar: ChatMessage[], callNumber: number) {
     setBusy(true);
+    setAiError(null);
     try {
       const text = await ai(
         buildDialogueMessages(idea, msgsSoFar),
@@ -109,6 +113,7 @@ export default function IdeaMapPage() {
       }
     } catch (err) {
       console.error(err);
+      setAiError(t(lang, "aiError"));
     } finally {
       setBusy(false);
     }
@@ -116,6 +121,7 @@ export default function IdeaMapPage() {
 
   async function generatePlanAndBudget(proj: ProjectProfile) {
     setBusy(true);
+    setAiError(null);
     try {
       const planText = await ai(
         [{ role: "user", content: JSON.stringify(proj) }],
@@ -134,6 +140,7 @@ export default function IdeaMapPage() {
       updateHolder({ plan, budget });
     } catch (err) {
       console.error(err);
+      setAiError(t(lang, "aiError"));
     } finally {
       setBusy(false);
     }
@@ -141,6 +148,7 @@ export default function IdeaMapPage() {
 
   async function generateCompliance(proj: ProjectProfile, plan: BusinessPlan, budget: Budget) {
     setBusy(true);
+    setAiError(null);
     try {
       const text = await ai(
         [{ role: "user", content: JSON.stringify({ proj, plan, budget }) }],
@@ -152,6 +160,7 @@ export default function IdeaMapPage() {
       updateHolder({ comp });
     } catch (err) {
       console.error(err);
+      setAiError(t(lang, "aiError"));
     } finally {
       setBusy(false);
     }
@@ -159,6 +168,7 @@ export default function IdeaMapPage() {
 
   async function generateLogo(proj: ProjectProfile, plan: BusinessPlan | null, budget: Budget | null) {
     setBusy(true);
+    setAiError(null);
     try {
       // Plan + budget are already known by this point in the workflow, so the
       // advisor grounds the logo concept in the real business model and
@@ -169,14 +179,27 @@ export default function IdeaMapPage() {
       updateHolder({ logo: { source: "generated", concept } });
     } catch (err) {
       console.error(err);
+      setAiError(t(lang, "aiError"));
     } finally {
       setBusy(false);
     }
   }
 
-  // Fire AI calls automatically when entering a step that needs them.
+  function retryCurrentStep() {
+    if (!holder) return;
+    if (holder.step === "dialogue") runDialogueCall(holder.idea, holder.msgs, holder.qN + 1);
+    else if (holder.step === "plan" && holder.proj) generatePlanAndBudget(holder.proj);
+    else if (holder.step === "compliance" && holder.proj && holder.plan && holder.budget) {
+      generateCompliance(holder.proj, holder.plan, holder.budget);
+    } else if (holder.step === "logo" && holder.proj) generateLogo(holder.proj, holder.plan, holder.budget);
+  }
+
+  // Fire AI calls automatically when entering a step that needs them. Stops
+  // once aiError is set so a failed call doesn't retry itself forever —
+  // the user has to click "Retry" (see retryCurrentStep / the error banner
+  // below), rather than the app silently hammering the API in a loop.
   useEffect(() => {
-    if (!holder || busy) return;
+    if (!holder || busy || aiError) return;
     if (holder.step === "dialogue" && holder.msgs.length === 0 && holder.qN === 0) {
       runDialogueCall(holder.idea, [], 1);
     } else if (holder.step === "plan" && !holder.plan && holder.proj) {
@@ -185,7 +208,7 @@ export default function IdeaMapPage() {
       generateCompliance(holder.proj, holder.plan, holder.budget);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [holder?.step, holder?.msgs.length, holder?.plan, holder?.comp, busy]);
+  }, [holder?.step, holder?.msgs.length, holder?.plan, holder?.comp, busy, aiError]);
 
   if (!auth) {
     return <AuthGate lang={lang} setLang={setLang} onAuth={handleAuth} />;
@@ -224,6 +247,28 @@ export default function IdeaMapPage() {
       onLogout={handleLogout}
       title={t(lang, stepTitleKey[holder.step])}
     >
+      {aiError && (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            flexWrap: "wrap",
+            background: COLORS.redContainer,
+            border: `1px solid ${COLORS.red}`,
+            borderRadius: 10,
+            padding: "12px 16px",
+            marginBottom: 20,
+          }}
+        >
+          <span style={{ fontSize: 13.5, color: COLORS.onSurface }}>{aiError}</span>
+          <button onClick={retryCurrentStep} style={{ ...ui.btnSecondary, padding: "8px 16px", fontSize: 13 }}>
+            {t(lang, "retry")}
+          </button>
+        </div>
+      )}
+
       {holder.step === "info" && (
         <StepInfo
           lang={lang}

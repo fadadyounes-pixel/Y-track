@@ -79,6 +79,11 @@ buttons just advance `step`, and the effect fires the right AI call if the targe
 The `logo` step is the one exception: generating one is a deliberate user action
 (`onGenerate`), not automatic on step entry, since uploading one's own logo is equally valid.
 
+If an AI call fails (no provider configured, rate limit, network error), `page.tsx` sets
+`aiError` and shows a dismissable banner with a "Retry" button above the step content —
+the auto-trigger `useEffect` checks `!aiError` so a failure doesn't silently retry itself
+forever. `retryCurrentStep()` re-issues whatever call matches `holder.step`.
+
 Dialogue is 5 sequential AI calls: calls 1–4 ask one short question each (plain text,
 `mode: "chat"`), call 5 returns the structured `ProjectProfile` JSON (`mode: "json"`).
 See `dialogueSystemPrompt()` in `lib/ai.ts` — the branch is `questionNumber < 5` (ask)

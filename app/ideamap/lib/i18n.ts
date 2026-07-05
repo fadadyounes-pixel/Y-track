@@ -44,6 +44,8 @@ export const TX: Record<Lang, Dict> = {
     next: "Suivant",
     back: "Retour",
     loading: "Le conseiller réfléchit…",
+    aiError: "Le conseiller n'a pas pu répondre. Vérifiez la connexion et réessayez.",
+    retry: "Réessayer",
 
     // Step 0 — Info (personal profile, shown once before the idea step)
     infoEyebrow: "Phase 1 · Vos informations",
@@ -303,6 +305,8 @@ export const TX: Record<Lang, Dict> = {
     next: "التالي",
     back: "رجوع",
     loading: "المستشار يفكر…",
+    aiError: "تعذّر على المستشار الإجابة. تحقق من الاتصال وحاول مجدداً.",
+    retry: "إعادة المحاولة",
 
     infoEyebrow: "المرحلة 1 · معلوماتك",
     infoTitle: "معلوماتك الشخصية",
@@ -547,6 +551,8 @@ export const TX: Record<Lang, Dict> = {
     next: "Next",
     back: "Back",
     loading: "The advisor is thinking…",
+    aiError: "The advisor couldn't respond. Check your connection and try again.",
+    retry: "Retry",
 
     infoEyebrow: "Phase 1 · Your Information",
     infoTitle: "Your Information",
