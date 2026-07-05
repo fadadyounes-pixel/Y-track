@@ -33,9 +33,11 @@ downloadable jury presentation.
 app/ideamap/
 ├── page.tsx                 # orchestrator: auth, AI call sequencing, step routing
 ├── components/
-│   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup — CareerMap-style dark
-│   │                          screen with live role detection (icon/color/CTA react to the code
-│   │                          being typed, using a local AUTH_COLORS palette, not lib/constants.ts)
+│   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup — navy/white/blue screen
+│   │                          built around the IdeaMapMark brain+pin brand mark, with live role
+│   │                          detection (icon/label react to the code being typed), using a local
+│   │                          AUTH_COLORS palette scoped to this screen only, not lib/constants.ts
+│   ├── IdeaMapMark.tsx        # brain-into-map-pin brand mark SVG, used only on the auth screen
 │   ├── Shell.tsx              # sidebar + topbar layout for the 10-step workflow
 │   ├── Step*.tsx               # one component per workflow step (incl. StepInfo.tsx, StepLogo.tsx)
 │   ├── CoordinatorDashboard.tsx
