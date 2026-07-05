@@ -1,4 +1,4 @@
-import { Lang } from "./types";
+import { Lang, LOGO_ICONS } from "./types";
 import { PILLARS, SECTORS, JURY_GRID, REQUIRED_DOCUMENTS, MAX_GRANT_MAD } from "./constants";
 
 export interface AIMessage {
@@ -149,4 +149,21 @@ Respond with ONLY a JSON object (no markdown, no commentary) matching exactly th
   "juryScore": { "impact": number, "viability": number, "relevance": number, "management": number, "sustainability": number, "innovation": number }
 }
 Each juryScore field must not exceed its grid maximum, and "score" must equal their sum.`;
+}
+
+export function logoConceptSystemPrompt(lang: Lang): string {
+  return `You are IdeaMap. Design a simple monogram logo concept for the given INDH project profile — for a holder who has no logo of their own yet.
+${langInstruction(lang)}
+Respond with ONLY a JSON object (no markdown, no commentary) matching exactly this shape:
+{
+  "initials": string,
+  "primaryColor": string,
+  "secondaryColor": string,
+  "icon": string,
+  "tagline": string
+}
+"initials" must be 1-3 uppercase letters drawn from the project name.
+"primaryColor" and "secondaryColor" must be hex colors (e.g. "#1F4D3E") that suit the project's sector — pick two that work well together, not pure black/white.
+"icon" must be exactly one of: ${LOGO_ICONS.join(", ")} — whichever best matches the project's sector or activity.
+"tagline" must be a short 3-6 word phrase in the requested language, evocative of the project, suitable to print under a logo.`;
 }

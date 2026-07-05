@@ -1,19 +1,23 @@
 "use client";
 
+import { useState } from "react";
 import { COLORS, REQUIRED_DOCUMENTS } from "../lib/constants";
 import { t } from "../lib/i18n";
 import { HolderState, Lang } from "../lib/types";
 import { docsCompletion, formatMAD, readinessPercent } from "../lib/utils";
 import * as ui from "../lib/ui";
 
-function download(filename: string, content: string) {
-  const blob = new Blob([content], { type: "text/plain;charset=utf-8" });
+function downloadBlob(filename: string, blob: Blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
   a.download = filename;
   a.click();
   URL.revokeObjectURL(url);
+}
+
+function download(filename: string, content: string) {
+  downloadBlob(filename, new Blob([content], { type: "text/plain;charset=utf-8" }));
 }
 
 function planText(state: HolderState): string {
@@ -98,6 +102,23 @@ export default function StepExport({ lang, state, onRestart }: { lang: Lang; sta
   const tr = (k: string) => t(lang, k);
   const readiness = readinessPercent(state);
   const { done, total } = docsCompletion(state.docs);
+  const [buildingPpt, setBuildingPpt] = useState(false);
+  const [pptError, setPptError] = useState<string | null>(null);
+
+  async function handleJuryPpt() {
+    setBuildingPpt(true);
+    setPptError(null);
+    try {
+      const { buildJuryPptx } = await import("../lib/pptx");
+      const blob = await buildJuryPptx(state, lang);
+      downloadBlob(`${state.cin}-presentation-jury.pptx`, blob);
+    } catch (err) {
+      console.error(err);
+      setPptError(tr("exportPptError"));
+    } finally {
+      setBuildingPpt(false);
+    }
+  }
 
   return (
     <div>
@@ -172,7 +193,11 @@ export default function StepExport({ lang, state, onRestart }: { lang: Lang; sta
         >
           📖 {tr("exportDownloadGuide")}
         </button>
+        <button style={{ ...ui.btnSecondary, ...(buildingPpt ? ui.disabled : {}) }} onClick={handleJuryPpt} disabled={buildingPpt}>
+          🎯 {buildingPpt ? tr("loading") : tr("exportDownloadJuryPpt")}
+        </button>
       </div>
+      {pptError && <p style={{ color: COLORS.red, fontSize: 12.5, marginTop: -12, marginBottom: 24 }}>{pptError}</p>}
 
       <div style={{ textAlign: "right", display: "flex", justifyContent: "flex-end", gap: 12 }}>
         <button style={ui.btnSecondary} onClick={onRestart}>

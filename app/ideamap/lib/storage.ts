@@ -42,12 +42,18 @@ export function newHolderState(cin: string, name: string, coordinatorCode?: stri
     budget: null,
     comp: null,
     docs: emptyDocsState(),
+    uploads: {},
+    logo: null,
     coordinatorCode,
   };
 }
 
 export function loadHolder(cin: string): HolderState | null {
-  return readJSON<HolderState | null>(HOLDER_KEY(cin), null);
+  const state = readJSON<Partial<HolderState> | null>(HOLDER_KEY(cin), null);
+  if (!state) return null;
+  // Backfills fields added after some holders were already saved, so older
+  // records don't crash newer code that expects them to exist.
+  return { uploads: {}, logo: null, ...state } as HolderState;
 }
 
 export function saveHolder(state: HolderState) {

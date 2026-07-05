@@ -19,13 +19,26 @@ import {
   businessPlanSystemPrompt,
   complianceSystemPrompt,
   dialogueSystemPrompt,
+  logoConceptSystemPrompt,
   parseJSON,
 } from "./lib/ai";
-import { STEP_ORDER } from "./lib/constants";
+import { MAX_UPLOAD_BYTES, STEP_ORDER } from "./lib/constants";
 import { t } from "./lib/i18n";
-import { BusinessPlan, Budget, ChatMessage, ComplianceReport, HolderState, Lang, ProjectProfile, StepId } from "./lib/types";
+import {
+  BusinessPlan,
+  Budget,
+  ChatMessage,
+  ComplianceReport,
+  HolderState,
+  Lang,
+  LogoConcept,
+  ProjectProfile,
+  StepId,
+} from "./lib/types";
 import { loadHolder, newHolderState, saveHolder } from "./lib/storage";
+import { fileToDataUrl } from "./lib/utils";
 import { COLORS } from "./lib/constants";
+import StepLogo from "./components/StepLogo";
 
 function LoadingCard({ lang }: { lang: Lang }) {
   return (
@@ -143,6 +156,19 @@ export default function IdeaMapPage() {
     }
   }
 
+  async function generateLogo(proj: ProjectProfile) {
+    setBusy(true);
+    try {
+      const text = await ai([{ role: "user", content: JSON.stringify(proj) }], logoConceptSystemPrompt(lang), 300, "json");
+      const concept = parseJSON<LogoConcept>(text);
+      updateHolder({ logo: { source: "generated", concept } });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   // Fire AI calls automatically when entering a step that needs them.
   useEffect(() => {
     if (!holder || busy) return;
@@ -178,6 +204,7 @@ export default function IdeaMapPage() {
     budget: "navBudget",
     compliance: "navCompliance",
     documents: "navDocuments",
+    logo: "navLogo",
     export: "navExport",
   };
 
@@ -237,7 +264,50 @@ export default function IdeaMapPage() {
         <StepDocuments
           lang={lang}
           docs={holder.docs}
+          uploads={holder.uploads}
           onToggle={(id) => updateHolder({ docs: { ...holder.docs, [id]: !holder.docs[id] } })}
+          onUpload={async (id, file) => {
+            if (file.size > MAX_UPLOAD_BYTES) return t(lang, "documentsTooLarge");
+            try {
+              const dataUrl = await fileToDataUrl(file);
+              updateHolder({
+                uploads: {
+                  ...holder.uploads,
+                  [id]: { fileName: file.name, fileType: file.type, dataUrl, uploadedAt: new Date().toISOString() },
+                },
+                docs: { ...holder.docs, [id]: true },
+              });
+              return null;
+            } catch {
+              return t(lang, "documentsUploadError");
+            }
+          }}
+          onRemoveUpload={(id) => {
+            const nextUploads = { ...holder.uploads };
+            delete nextUploads[id];
+            updateHolder({ uploads: nextUploads });
+          }}
+          onContinue={() => updateHolder({ step: "logo" })}
+        />
+      )}
+
+      {holder.step === "logo" && (
+        <StepLogo
+          lang={lang}
+          logo={holder.logo}
+          busy={busy}
+          onGenerate={() => holder.proj && generateLogo(holder.proj)}
+          onUpload={async (file) => {
+            if (file.size > MAX_UPLOAD_BYTES) return t(lang, "documentsTooLarge");
+            try {
+              const dataUrl = await fileToDataUrl(file);
+              updateHolder({ logo: { source: "uploaded", imageDataUrl: dataUrl } });
+              return null;
+            } catch {
+              return t(lang, "documentsUploadError");
+            }
+          }}
+          onRemove={() => updateHolder({ logo: null })}
           onContinue={() => updateHolder({ step: "export" })}
         />
       )}

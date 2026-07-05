@@ -10,6 +10,7 @@ export type StepId =
   | "budget"
   | "compliance"
   | "documents"
+  | "logo"
   | "export";
 
 export interface ChatMessage {
@@ -77,6 +78,32 @@ export interface ComplianceReport {
 
 export type DocumentsState = Record<string, boolean>;
 
+export interface DocumentUpload {
+  fileName: string;
+  fileType: string;
+  dataUrl: string;
+  uploadedAt: string;
+}
+
+export type UploadsState = Record<string, DocumentUpload>;
+
+export const LOGO_ICONS = ["leaf", "wheat", "fish", "thread", "hammer", "house", "book", "chip", "hand", "sun"] as const;
+export type LogoIcon = (typeof LOGO_ICONS)[number];
+
+export interface LogoConcept {
+  initials: string;
+  primaryColor: string;
+  secondaryColor: string;
+  icon: LogoIcon;
+  tagline: string;
+}
+
+export interface LogoState {
+  source: "uploaded" | "generated";
+  imageDataUrl?: string;
+  concept?: LogoConcept;
+}
+
 export interface HolderState {
   cin: string;
   name: string;
@@ -90,5 +117,7 @@ export interface HolderState {
   budget: Budget | null;
   comp: ComplianceReport | null;
   docs: DocumentsState;
+  uploads: UploadsState;
+  logo: LogoState | null;
   coordinatorCode?: string;
 }

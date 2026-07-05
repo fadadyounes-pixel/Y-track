@@ -7,7 +7,8 @@ This file is auto-loaded by Claude Code. Keep it in sync with what's actually in
 Y-TRACK is a Next.js 16 (App Router, TypeScript) app. Its flagship feature is **IdeaMap**,
 an AI-powered assistant that walks a Moroccan citizen through building an INDH
 (Initiative Nationale pour le Développement Humain) funding application — from a raw idea
-to a full business plan, budget, compliance report and document checklist.
+to a full business plan, budget, compliance report, document checklist, logo, and a
+downloadable jury presentation.
 
 - Landing page: `app/page.tsx`
 - IdeaMap: `app/ideamap/` (route `/ideamap`)
@@ -33,18 +34,20 @@ app/ideamap/
 ├── page.tsx                 # orchestrator: auth, AI call sequencing, step routing
 ├── components/
 │   ├── AuthGate.tsx          # CIN / @CoordCOD / admin code login+signup
-│   ├── Shell.tsx              # sidebar + topbar layout for the 8-step workflow
-│   ├── Step*.tsx               # one component per workflow step
+│   ├── Shell.tsx              # sidebar + topbar layout for the 9-step workflow
+│   ├── Step*.tsx               # one component per workflow step (incl. StepLogo.tsx)
 │   ├── CoordinatorDashboard.tsx
 │   └── AdminDashboard.tsx
 └── lib/
-    ├── types.ts       # HolderState, ProjectProfile, BusinessPlan, Budget, ComplianceReport…
+    ├── types.ts       # HolderState, ProjectProfile, BusinessPlan, Budget, ComplianceReport, LogoState…
     ├── constants.ts   # design tokens, INDH domain facts (sectors, pillars, jury grid, documents)
     ├── i18n.ts        # TX dictionary (fr/ar/en) + t(), pillarLabel(), dir(), fontFamily()
     ├── ai.ts          # client ai() fetch helper (chat|json mode) + system-prompt builders (all grounded via indhContext()) + parseJSON()
+    ├── logo.ts        # renderLogoSvg() (generated logo badge), rasterizeImage(), getLogoPngDataUrl()
+    ├── pptx.ts         # buildJuryPptx() — dynamically imports pptxgenjs, builds the jury deck
     ├── ui.ts          # shared inline-style objects (card, btnPrimary, input, …)
     ├── storage.ts     # localStorage-backed holder/coordinator persistence
-    └── utils.ts       # readinessPercent(), stepProgressPercent(), formatMAD()
+    └── utils.ts       # readinessPercent(), stepProgressPercent(), formatMAD(), fileToDataUrl()
 ```
 
 ### Auth & roles
@@ -55,18 +58,32 @@ app/ideamap/
   `listCoordinators()` — coordinators are created by an Admin, never self-signup.
 - Admin: hardcoded `@adminINDH`.
 
-### The 8-step workflow (`app/ideamap/page.tsx`)
+### The 9-step workflow (`app/ideamap/page.tsx`)
 
-`idea → dialogue → profile → plan → budget → compliance → documents → export`
+`idea → dialogue → profile → plan → budget → compliance → documents → logo → export`
 
 AI calls are triggered by a `useEffect` keyed on `holder.step`, not by button clicks directly —
 buttons just advance `step`, and the effect fires the right AI call if the target data
 (`proj` / `plan` / `comp`) isn't there yet. This keeps step components pure/presentational.
+The `logo` step is the one exception: generating one is a deliberate user action
+(`onGenerate`), not automatic on step entry, since uploading one's own logo is equally valid.
 
 Dialogue is 5 sequential AI calls: calls 1–4 ask one short question each (plain text,
 `mode: "chat"`), call 5 returns the structured `ProjectProfile` JSON (`mode: "json"`).
 See `dialogueSystemPrompt()` in `lib/ai.ts` — the branch is `questionNumber < 5` (ask)
 vs `>= 5` (summarize).
+
+### Documents & logo
+
+At the `documents` step, each row can hold an uploaded file (`HolderState.uploads`,
+keyed by document id) alongside its checked state — attaching a file auto-checks it.
+Files are read client-side via `fileToDataUrl()` and capped at `MAX_UPLOAD_BYTES`
+(1.5 MB) to protect the `localStorage` quota; nothing is sent to a server.
+
+At the `logo` step, a holder either uploads their own image or has Rafiq generate a
+`LogoConcept` (initials, two colors, one of `LOGO_ICONS`, a tagline) via a `json`-mode
+call, rendered client-side as an SVG badge by `renderLogoSvg()` — no image-generation
+model involved, so it's free and never blocked by an image API's rate limit.
 
 ### Internationalization
 
@@ -95,7 +112,9 @@ to switch to Tajawal for Arabic.
 
 ## Known gaps / backlog
 
-No real backend yet — holder/coordinator data lives in `localStorage`, so it's per-browser,
-not shared across devices, and coordinator dashboards show *all* holders (there's no
-holder→coordinator assignment mechanism). Dossier "export" downloads plain-text files, not
-PDF/Excel. See the README for the fuller backlog list.
+No real backend yet — holder/coordinator data (including uploaded document files and
+logos, stored as data URLs) lives in `localStorage`, so it's per-browser, not shared
+across devices, and coordinator dashboards show *all* holders (there's no
+holder→coordinator assignment mechanism). Most dossier "export" items still download
+as plain text, not PDF/Excel — the jury presentation is the one exception, generated
+as a real `.pptx` via `lib/pptx.ts`. See the README for the fuller backlog list.

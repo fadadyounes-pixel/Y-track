@@ -23,3 +23,12 @@ export function stepProgressPercent(state: HolderState): number {
 export function formatMAD(n: number): string {
   return `${new Intl.NumberFormat("fr-FR").format(Math.round(n))} MAD`;
 }
+
+export function fileToDataUrl(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}

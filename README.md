@@ -27,11 +27,13 @@ IdeaMap guides a Moroccan citizen through every step needed to submit an INDH pr
 funding application — and turns weeks of guesswork into a structured, self-checked file:
 
 1. The user describes their idea in plain language
-2. An AI assistant asks 4 targeted questions, then structures the project into JSON
+2. An advisor asks 4 targeted questions, then structures the project into JSON
 3. IdeaMap generates a full **Business Plan**, **Budget**, and **Compliance Report**
-4. The user checks off required **Documents**
-5. A final **Dossier** screen shows overall readiness and lets the user download every
-   generated document
+4. The user checks off required **Documents** and can attach the actual files
+5. The user gets a **Logo** for their project — upload their own, or have the advisor
+   generate a monogram concept for free
+6. A final **Dossier** screen shows overall readiness and lets the user download every
+   generated document, including a ready-to-present **jury slide deck**
 
 Coordinators and admins get dashboards to track holders and manage the platform.
 
@@ -81,9 +83,22 @@ IdeaMap orients every project toward the axis it best serves:
 
 | Role | Access code | What they see |
 |---|---|---|
-| **Holder** | CIN, e.g. `AB123456` | The 8-step workflow, resumable across visits |
+| **Holder** | CIN, e.g. `AB123456` | The 9-step workflow, resumable across visits |
 | **Coordinator** | `@NAMECOD`, created by an Admin | Dashboard of all holders + progress |
 | **Admin** | `@adminINDH` | Platform stats, project list, coordinator management |
+
+## Documents & logo
+
+At the Documents step, a holder can attach the actual file for each required or
+optional document (image or PDF, 1.5 MB max) — attaching one auto-checks it.
+Files are stored as data URLs in the holder's own `localStorage` record; nothing is
+uploaded to a server (see [Known gaps](#feature-backlog)).
+
+At the Logo step, a holder either uploads their own logo image, or has the advisor
+generate one for free: a short Rafiq call returns a monogram concept (initials, two
+colors, an icon suited to the project's sector, a tagline), which is rendered
+client-side as an SVG badge — no image-generation API involved, so it costs nothing
+and never fails due to image-model rate limits. This step is skippable.
 
 ## Dossier deliverables
 
@@ -94,10 +109,14 @@ At the Export step, a holder can download:
 - Compliance report (score, jury grid, recommendations)
 - Document checklist (required vs. optional, with checkmarks)
 - Submission guide (the 6 steps to file with the DAS/CPDH, useful contacts)
-- Everything combined into one dossier
+- **A real jury presentation (.pptx)** — a 7-slide deck (title with logo, plan,
+  budget table, compliance score and jury grid, next steps), built client-side with
+  `pptxgenjs` and ready to present to the CPDH
+- Everything else combined into one text dossier
 
-These currently download as plain text — see the backlog below for real PDF/XLS/PPT
-formats.
+The business plan, budget, compliance report, checklist, and guide currently download
+as plain text — the jury presentation is the one deliverable that's a real,
+formatted file today. See the backlog below for real PDF/XLS formats on the rest.
 
 ## How to run
 
@@ -148,8 +167,8 @@ npm start
 ## Feature backlog
 
 ### High priority
-- Real PDF/XLS export (currently the export screen downloads plain-text `.txt` files)
-- Auto-generated jury presentation (PPT) — a ready-to-present deck for the CPDH
+- Real PDF/XLS export for the business plan, budget, compliance report, checklist,
+  and guide (only the jury presentation is a real formatted file today)
 - Mobile budget table (card layout for small screens)
 - Empty states polish for Coordinator / Admin dashboards
 

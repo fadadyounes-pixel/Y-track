@@ -13,6 +13,7 @@ const STEP_ICON: Record<StepId, string> = {
   budget: "💰",
   compliance: "🛡️",
   documents: "📎",
+  logo: "🎨",
   export: "📤",
 };
 
@@ -24,6 +25,7 @@ const STEP_NAV_KEY: Record<StepId, string> = {
   budget: "navBudget",
   compliance: "navCompliance",
   documents: "navDocuments",
+  logo: "navLogo",
   export: "navExport",
 };
 

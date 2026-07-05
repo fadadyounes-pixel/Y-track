@@ -90,8 +90,13 @@ export const STEP_ORDER = [
   "budget",
   "compliance",
   "documents",
+  "logo",
   "export",
 ] as const;
+
+// Keeps uploaded files (stored as data URLs in localStorage) from silently
+// blowing the browser's per-origin storage quota.
+export const MAX_UPLOAD_BYTES = 1_500_000;
 
 export const RE_HOLDER = /^[A-Z]{2}\d{3,}$/;
 export const RE_COORD = /^@[A-Za-z]{2,}COD$/i;
